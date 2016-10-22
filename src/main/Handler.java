@@ -8,6 +8,7 @@ import java.util.Random;
 import enums.IDEquipo;
 import ninjas.EquipoNinja;
 import ninjas.Ninja;
+import repositorioNinjas.GeneradorNinjas;
 import tablero.Cuadro;
 import tablero.Tablero;
 
@@ -77,6 +78,15 @@ public class Handler {
 		tab.setEquipoA(e1);
 		tab.setEquipoB(e2);
 		
+	}
+	
+	public void agregarEquipos(){
+		GeneradorNinjas gen = new GeneradorNinjas(tab);
+		
+		EquipoNinja a = gen.generarEquipo(4, IDEquipo.A);
+		EquipoNinja b = gen.generarEquipo(4, IDEquipo.B);
+		
+		tab.setEquipoA(a);tab.setEquipoBEnRojo(b);
 	}
 	
 	private void agregarTablero(){

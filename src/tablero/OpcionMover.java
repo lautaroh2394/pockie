@@ -16,8 +16,10 @@ public class OpcionMover extends OpcionMenuNinja{
 	@Override
 	public boolean queHacer(int mx, int my, Cuadro c) {
 		if (this.meClickearon(mx,my)){
-		MenuNinja.estadoMenu = StateMenu.SeleccionCuadroMoverNinja;
+		//MenuNinja.estadoMenu = StateMenu.SeleccionCuadroMoverNinja;
+		Tablero.stateMenu = StateMenu.SeleccionCuadroMoverNinja;
 		c.getT().colorearCercanosMov(c.getNinja());
+		
 		return true;
 		} else return false;
 	}

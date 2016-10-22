@@ -16,7 +16,8 @@ public class OpcionAtacar extends OpcionMenuNinja{
 	@Override
 	public boolean queHacer(int mx, int my, Cuadro c) {
 		if (this.meClickearon(mx,my)){
-		MenuNinja.estadoMenu = StateMenu.SeleccionCuadroAtacarNinja;
+		//MenuNinja.estadoMenu = StateMenu.SeleccionCuadroAtacarNinja;
+		Tablero.stateMenu = StateMenu.SeleccionCuadroAtacarNinja;
 		c.getT().colorearCercanosAtt(c.getNinja());
 		return true;
 		} else return false;

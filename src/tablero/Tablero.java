@@ -13,6 +13,10 @@ import ninjas.Ninja;
 
 public class Tablero extends GameObject {
 	
+	//TODO: ia del equipo malo, aunque sea chota, que se muevan solos. esta implementado algo pero estoy cansado y cero ganas de ver porqeu
+	
+	public static StateMenu stateMenu = StateMenu.NoInstanciado; 
+	
 	private EquipoNinja equipoA;
 	private EquipoNinja equipoB;
 	
@@ -25,6 +29,11 @@ public class Tablero extends GameObject {
 	private int wPantalla;
 	
 	private Cuadro cuadroActivo;
+	
+	public IDEquipo equipoActivo;
+	public IDEquipo equipoNoActivo;
+	private IDEquipo primeroEnAtacar = IDEquipo.A;
+	private IDEquipo segundoEnAtacar = IDEquipo.B;
 	
 	private Color colorNoP = Color.WHITE;
 	private Color colorPA = Color.red;
@@ -41,6 +50,8 @@ public class Tablero extends GameObject {
 		
 		this.cuadros = new LinkedList<Cuadro>();
 		this.initCuadros();
+		this.equipoActivo = primeroEnAtacar;
+		this.equipoNoActivo = segundoEnAtacar;
 	}
 	
 	public void addNinja(Ninja ninja, IDEquipo id){
@@ -58,8 +69,8 @@ public class Tablero extends GameObject {
 	@Override
 	public void tick() {
 
-		equipoA.tick();
-		equipoB.tick();
+		ninjasTick();
+		chequearFinDeTurno();
 		
 	}
 
@@ -78,7 +89,6 @@ public class Tablero extends GameObject {
 
 		equipoA.render(g);
 		equipoB.render(g);
-		
 	}
 
 	private void dibujarTablero(Graphics g){
@@ -126,20 +136,26 @@ public class Tablero extends GameObject {
 		for(Cuadro c : cuadros){
 			
 				if (c.seClickeo(mx,my)){
-					if (MenuNinja.estadoMenu != StateMenu.NoInstanciado) {
-						if (c.noTieneMenu()){
-							buscarCuadroConMenuYTogglear();
+						//if (MenuNinja.estadoMenu != StateMenu.NoInstanciado ) {
+						if (Tablero.stateMenu != StateMenu.NoInstanciado ) {
+							if (c.noTieneMenu()){
+								buscarCuadroConMenuYTogglear();
+								return;
+							}
+							else {
+								if (this.equipoActivo == c.getNinja().idequipo){
+									c.getNinja().getMenu().decidiQueHacer(mx, my, c);
+									this.cuadroActivo = c;
+									
+									c.ocultarMenu();/////////////
+									}
+							}
 						}
 						else {
-							c.getNinja().getMenu().decidiQueHacer(mx, my, c);
-							this.cuadroActivo = c;							
+						c.toggleMenu(this.equipoActivo);
 						}
-				}
-					else {
-					c.toggleMenu();
 					}
 				}
-			}
 	}
 	
 	
@@ -148,7 +164,7 @@ public class Tablero extends GameObject {
 		for(Cuadro c : cuadros){
 			if (!c.ninjaIsNull()){
 				if (!c.getNinja().menuIsNull()){
-					c.toggleMenu();
+					c.toggleMenu(this.equipoActivo);
 				}
 			}
 		}
@@ -156,12 +172,13 @@ public class Tablero extends GameObject {
 	
 	public void seleccionCuadroMov(int mx, int my){
 		Cuadro c = cuadroEnPos(mx, my);
-		
+
 		if (c != null) {
 			if (this.cuadroActivo.getNinja().movete(c)){
+			
 			this.cuadroActivo = null;
 			}
-		} else this.cuadroActivo.toggleMenu();;
+		}else this.cuadroActivo.toggleMenu(this.equipoActivo);
 		resetColores();
 	}
 	
@@ -172,7 +189,7 @@ public class Tablero extends GameObject {
 			if (this.cuadroActivo.getNinja().atacaA(c)){
 			this.cuadroActivo = null;
 			}
-		}else this.cuadroActivo.toggleMenu();
+		}else this.cuadroActivo.toggleMenu(this.equipoActivo);
 		resetColores();
 	}
 	
@@ -209,6 +226,54 @@ public class Tablero extends GameObject {
 				c.cambiaColor();
 			}
 		}
+	}
+	
+	private void ninjasTick(){
+		
+		equipoA.tick();
+		equipoB.tick();
+	}
+	
+	private void chequearFinDeTurno(){
+		boolean finTurno;
+		
+		
+		
+		if (equipoActivo == IDEquipo.A){
+			finTurno = equipoA.esFinDeTurno();
+		} else {
+			finTurno = equipoB.esFinDeTurno();
+		}
+		
+		if (finTurno) {
+			toggleEquipoActivo();
+		}
+	}
+	
+	private void IAEquipo(IDEquipo idActivo){
+		if (IDEquipo.B == idActivo){
+			equipoB.IA(this);}
+		else {
+			
+		}
+	}
+	
+	public Ninja buscarEnemigoCercano(Ninja n){
+		
+		if (n.idequipo == IDEquipo.A){
+			return equipoB.cercanoA(n);
+		}
+		else{
+			return equipoA.cercanoA(n);
+		}
+	}
+	
+	private void toggleEquipoActivo(){
+		IDEquipo actual = equipoActivo;
+		equipoActivo = equipoNoActivo;
+		equipoNoActivo = actual;
+		IAEquipo(equipoActivo);
+		
 	}
 	
 	private int distancia(Cuadro c1, Cuadro c2){
@@ -271,6 +336,14 @@ public class Tablero extends GameObject {
 	public void setEquipoB(EquipoNinja equipoB) {
 		this.equipoB = equipoB;
 	}
-
+	
+	public void setEquipoBEnRojo(EquipoNinja equipoB) {
+		this.equipoB = equipoB;
+		equipoB.setColorNombre(Color.red);
+	}
+	
+	public Cuadro getCuadroActivo(){
+		return this.cuadroActivo;
+	}
 	
 }

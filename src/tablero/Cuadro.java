@@ -3,6 +3,7 @@ package tablero;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import enums.IDEquipo;
 import ninjas.Ninja;
 
 public class Cuadro {
@@ -53,8 +54,8 @@ public class Cuadro {
 		setColor(colorNoPintado);		
 	}
 	
-	public void toggleMenu(){
-		if (puedeHacerAlgo()) this.ninja.toggleMenu();
+	public void toggleMenu(IDEquipo id){
+		if (puedeHacerAlgo()) this.ninja.toggleMenu(id);
 	}
 	
 	private boolean puedeHacerAlgo(){
@@ -76,6 +77,12 @@ public class Cuadro {
 			getNinja().teAtacaron(danio);
 		}
 		
+	}
+	
+	public void ocultarMenu(){
+		if (!getNinja().menuIsNull()){ 
+		getNinja().getMenu().ocultarMenu();
+		}
 	}
 	
 	
