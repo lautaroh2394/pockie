@@ -101,7 +101,8 @@ public class Ninja {
 				(int) (cuadro.getY() + cuadro.getHeight() * 0.26));
 	}
 
-	public void IA() {//hay que refinar, pero la base base esta
+	public void IA() {	//hay que refinar, pero la base base esta
+						//TODO: arreglar la hiper velocidad con la que atacan y se mueven solos 
 		int timer =0 ;
 		boolean b=false;
 		
