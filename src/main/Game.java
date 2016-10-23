@@ -20,7 +20,7 @@ public class Game extends Canvas implements Runnable{
 		
 		handler = new Handler(WIDTH, HEIGHT,this);
 		//handler.agregarEquipos();
-		handler.agregarUnNinjaAI();
+		handler.agregarDosEquiposUnIA();
 		
 		new Ventana(WIDTH,HEIGHT,"Pockie", this);
 		

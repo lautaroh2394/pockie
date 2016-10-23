@@ -3,6 +3,7 @@ package main;
 import java.awt.Graphics;
 import java.util.LinkedList;
 import repositorioNinjas.GeneradorNinjas;
+import tablero.HUD;
 import tablero.Tablero;
 
 public class Handler {
@@ -51,7 +52,7 @@ public class Handler {
 		tab.setEquipos(gen.pruebagenerarDosEquipos());
 	}
 	
-	public void agregarUnNinjaAI(){
+	public void agregarDosEquiposUnIA(){
 		GeneradorNinjas gen = new GeneradorNinjas(tab);
 		tab.setEquipos(gen.pruebagenerardosequiposunninjaAI());
 	}

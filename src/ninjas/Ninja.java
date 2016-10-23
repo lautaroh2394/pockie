@@ -2,6 +2,7 @@ package ninjas;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.LinkedList;
 import java.util.Random;
 
 import enums.IDEquipo;
@@ -83,10 +84,7 @@ public class Ninja {
 		renderVida(g);
 
 		renderMenu(g);
-		g.drawString(""+enemy+" "+this.cuadro.getPosRelX()+" "+this.cuadro.getPosRelY()+" "+n(), this.x, this.y);
 	}
-	
-	public String n(){ if (e!= null) return e.nom; else return "null";}
 
 	private void renderMenu(Graphics g) {
 		if (this.menu != null)
@@ -103,22 +101,41 @@ public class Ninja {
 				(int) (cuadro.getY() + cuadro.getHeight() * 0.26));
 	}
 
-public int timer =0 ;
-
-	public String enemy;
-	public Ninja e=null;
 	public void IA() {//hay que refinar, pero la base base esta
+		int timer =0 ;
+		boolean b=false;
+		
+		while (!b){
+			
 		timer++;
-		if (!banderaMov && timer>=200){
-			if (e == null){	Tablero t = getCuadro().getT(); e = t.buscarEnemigoCercano(this); enemy = e.nom;moverseParaAtacar(e, t);}
+		Tablero t = getCuadro().getT();
+		Ninja e = null;
+		if( !elOtroEquipoEstaMuerto(this.idequipo)){
+			e = t.buscarEnemigoCercano(this);
+		}
+		if (!banderaMov && timer>=500){
+ 
+			if (e != null)
+				{
+				moverseParaAtacar(e, t);
+				}
 		 
 		 timer = 0;
 		 }
-		if (!banderaAtt&&timer>=200){
-			if (puedeAtacar(e)){
-		atacaA(e.getCuadro());setBanderaAtt(false);timer =0;}
-			
+		if (!banderaAtt&&timer>=500){
+			if (puedeAtacar(e))
+			{
+				atacaA(e.getCuadro());
+				timer =0;
+				}
+			else rest();
+			}
+		if (!this.puedeHacerAlgo()){ b= true;}
 		}
+	}
+	
+	private boolean elOtroEquipoEstaMuerto(IDEquipo id){
+		return getCuadro().getT().unicoVivo(id);
 	}
 	
 	private boolean puedeAtacar(Ninja c){
@@ -126,14 +143,28 @@ public int timer =0 ;
 		return distancia(c.getCuadro(),this.cuadro,this.distAtt);} else return false;
 	}
 
-	private boolean moverseParaAtacar(Ninja n, Tablero t) {
-		 for (Cuadro c : t.getCuadros()){
-			 if (distancia(n.getCuadro(),c,this.distAtt) && puedoMovermeA(c)){
-				 movete(c);
-				 return true;
-			 };
-		 }
-		return true;
+	private void moverseParaAtacar(Ninja n, Tablero t) {
+		Random r = new Random();
+		Cuadro temp;
+		boolean b = true;
+		LinkedList<Cuadro> cquemepuedomover = new LinkedList<Cuadro>();
+		LinkedList<Cuadro> cquepuedoAtacarsimemuevoono = new LinkedList<Cuadro>();
+		for (Cuadro c : t.getCuadros()){
+			if (puedoMovermeA(c)){
+				cquemepuedomover.add(c);
+			}
+			if (distancia(n.getCuadro(),c,this.distAtt) && puedoMovermeA(c)){
+				cquepuedoAtacarsimemuevoono.add(c);
+			}
+		}
+		
+		if (cquepuedoAtacarsimemuevoono.size() != 0){
+			movete(cquepuedoAtacarsimemuevoono.get(r.nextInt(cquepuedoAtacarsimemuevoono.size())));
+		}
+		else if (cquemepuedomover.size() != 0){
+			movete(cquemepuedomover.get(r.nextInt(cquemepuedomover.size())));
+		}
+		else this.rest();
 	}
 
 	private boolean puedoMovermeA(Cuadro cuadro) {

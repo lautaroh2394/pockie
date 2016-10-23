@@ -1,6 +1,7 @@
 package tablero;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ public class Tablero extends GameObject {
 	public static StateMenu stateMenu = StateMenu.NoInstanciado; 
 	
 	private LinkedList<EquipoNinja> equipos;
-	private int equipoActivo;
+	private int equipoActivo = -1;
 	
 	private LinkedList<Cuadro> cuadros;
 	private Cuadro cuadroActivo;
@@ -29,15 +30,18 @@ public class Tablero extends GameObject {
 	private int hPantalla;
 	private int wPantalla;
 	
-	
+	private HUD hud;
 	
 	private Color colorNoP = Color.WHITE;
+	
+	private boolean finDeJuego = false;
 	
 	public Tablero(int hc, int wc, int hPant, int wPant){
 		
 		setUp(hc, wc, hPant, wPant);
-		agregarEquipos();
+//		agregarEquipos();
 		initCuadros();
+		hud = new HUD(hPant,wPant);
 		
 	}
 	
@@ -48,16 +52,28 @@ public class Tablero extends GameObject {
 		this.wPantalla = wPant;
 	}
 	
-	private void agregarEquipos(){
+//	private void agregarEquipos(){
+//		this.equipos = new LinkedList<EquipoNinja>();
+//		EquipoNinja a = new EquipoNinja(IDEquipo.A); a.toggleActivacion();
+//		equipos.add(a); equipos.add(new EquipoNinja(IDEquipo.B));
+//		
+//		setReferenciaAEquipoActivo();
+//	}
+	
+	private void agregarEquipos(LinkedList<EquipoNinja> e){
 		this.equipos = new LinkedList<EquipoNinja>();
-		EquipoNinja a = new EquipoNinja(IDEquipo.A); a.toggleActivacion();
-		equipos.add(a); equipos.add(new EquipoNinja(IDEquipo.B));
 		
-		setReferenciaAEquipoActivo();
+		for (EquipoNinja eq : e){
+		equipos.add(eq);
+		
+		}
+		equipos.get(0).toggleActivacion();
+		setReferenciaAEquipoActivo(0);
+		
 	}
 	
-	private void setReferenciaAEquipoActivo(){
-		equipoActivo = equipos.indexOf(getEquipoActivo());
+	private void setReferenciaAEquipoActivo(int i){
+		equipoActivo = i;
 	}
 	
 	public void addNinja(Ninja ninja, IDEquipo id){
@@ -82,22 +98,43 @@ public class Tablero extends GameObject {
 
 	@Override
 	public void tick() {
-
+		if (!finDeJuego){
 		equiposTick();
 		chequearFinDeTurno();
+		chequearFinJuego();
+		}
 	}
 
 	@Override
 	public void render(Graphics g) {
 		
-		this.dibujarTablero(g);
-		
+		this.dibujarTablero(g);		
 		renderEquipos(g);
+		hud.render(g);
+		
+		if (finDeJuego){
+			renderMjeFinJuego(g);
+		}
 	}
 
 	private void renderEquipos(Graphics g){
 		for (EquipoNinja en : equipos){
 			en.render(g);
+		}
+	}
+	
+	private void renderMjeFinJuego(Graphics g){
+		
+		int x = (int) (this.hPantalla*0.40);
+		int y = (int) (this.wPantalla*0.45);
+		
+		g.setFont(new Font(null, 10, 80 ));
+		if (getUnicoVivo().getId()== IDEquipo.CPU){
+			g.setColor(new Color(181, 12, 130));
+			g.drawString("Derrota", x, y);
+		}
+		else {
+			g.drawString("Victoria.", x, y);
 		}
 	}
 	
@@ -160,6 +197,10 @@ public class Tablero extends GameObject {
 	
 	private EquipoNinja getEquipoActivo(){
 		
+		if (equipoActivo != -1) {
+			return getEquipoActivo(equipoActivo) ;
+		}
+		else{
 		EquipoNinja eq = null;
 		for (int i = 0; i< equipos.size();i++){
 			if (equipos.get(i).getActivo()){
@@ -167,7 +208,9 @@ public class Tablero extends GameObject {
 				i = equipos.size();
 			}
 		}
+		setReferenciaAEquipoActivo(equipos.indexOf(eq));
 		return eq;
+		}
 	}
 	
 	private EquipoNinja getEquipoActivo(int equipo){
@@ -225,16 +268,34 @@ public class Tablero extends GameObject {
 	
 	private void equiposTick(){
 		
-		for (EquipoNinja en : equipos){
-			en.tick();
-		}
+		getEquipoActivo().tick();
 	}
 	
 	private void chequearFinDeTurno(){		
 		
-		if (getEquipoActivo(equipoActivo).esFinDeTurno()){
+		if (getEquipoActivo().esFinDeTurno()){
 			toggleEquipoActivo();
 		}
+	}
+	
+	private void chequearFinJuego() {
+		for (int i = 0;i< equipos.size();i++){
+			if (!equipos.get(i).teMoriste()){
+				if (unicoVivo(equipos.get(i).getId())) {
+					finDeJuego = true;
+					i = equipos.size();
+				}
+			}
+		}
+		
+	}
+	
+	private EquipoNinja getUnicoVivo(){
+		EquipoNinja e = null;
+		for (EquipoNinja eq : equipos){
+			if (unicoVivo(eq.getId())){ e = eq; return eq;}
+		}
+		return e;
 	}
 	
 	public Ninja buscarEnemigoCercano(Ninja n){
@@ -243,6 +304,7 @@ public class Tablero extends GameObject {
 		int menorDist = 500;
 		Ninja cercano = null;
 		Ninja temp = null;
+		
 		
 		for (EquipoNinja e : equipos){
 			temp = e.cercanoA(n);
@@ -253,13 +315,21 @@ public class Tablero extends GameObject {
 				
 			}
 		}
-		
-		return cercano;
+		return cercano;		
+	}
+	
+	public boolean unicoVivo(IDEquipo id){
+		for (EquipoNinja eq : equipos){
+			if (eq.id != id && eq.ninjas.size() != 0){
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private void toggleEquipoActivo(){
 
-		int actual = equipos.indexOf(getEquipoActivo(equipoActivo));
+		int actual = equipos.indexOf(getEquipoActivo());
 		
 		actual = (actual+1) % (equipos.size());
 		equipoActivo = actual;
@@ -326,7 +396,12 @@ public class Tablero extends GameObject {
 	}
 	
 	public void setEquipos(LinkedList<EquipoNinja> e){
-		this.equipos = e;
+		this.agregarEquipos(e);
+		this.hud.setEquipos(e);
+	}
+	
+	public LinkedList<EquipoNinja> getEquipos(){
+		return this.equipos;
 	}
 	
 }

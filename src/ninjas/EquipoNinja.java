@@ -17,6 +17,8 @@ public class EquipoNinja {
 	protected boolean activo = false;
 	protected Ninja ninjaActivo;
 	
+	protected float vidaMax = 0;
+	
 	public EquipoNinja(IDEquipo id, LinkedList<Ninja> n){
 		this.ninjas = n;
 		this.id= id;
@@ -27,24 +29,26 @@ public class EquipoNinja {
 		this(id, new LinkedList<Ninja>());
 	}
 	
-//	public void tick(){
-//		for (Ninja n : ninjas){
-//			chequearSiMurio(n);
-//			n.tick();
-//		}
+	public void tick(){ //TODO: arreglar los problemas de concurrencia (concurrentmodificationexception)
+						//ver lo de como solucionar usando iterator
+//	for (Ninja n : ninjas){
+//		n.tick();
+//		chequearSiMurio(n);
+//		
 //	}
-	
-	public void tick(){
-	for (Ninja n : ninjas){
-		chequearSiMurio(n);
-		n.tick();
-	}
+		
+		for (int i = 0; i< ninjas.size(); i++){
+			ninjas.get(i).tick();
+			chequearSiMurio(ninjas.get(i));
+
+		}
 }
 	
 	protected void avisarlesDeQueEquipoSon(LinkedList<Ninja> ninjas){
 		if (ninjas!=null){
 		for (Ninja n : ninjas){
 			n.setIdequipo(this.id);
+			vidaMax+=n.getVidaMax();
 		}
 		}
 	}
@@ -56,21 +60,23 @@ public class EquipoNinja {
 	}
 	
 	public Ninja cercanoA(Ninja nin){
+		if (ninjas.size() > 0){
 		
-		Ninja masCercano = ninjas.get(0);
-		
+		Ninja masCercano = ninjas.getFirst();
 		for (Ninja n : ninjas){
 			if (n.distancia(n.getCuadro(), nin.getCuadro(), masCercano.distA(nin))){
 				masCercano = n;
 			}
 		}
-		
 		return masCercano;
+		}
+		return null;
 	}
 	
 	protected void murio(Ninja n){
 		n.getCuadro().ninjaSeFue();
 		ninjas.remove(n);
+//		n.moriste();
 	}
 	
 	public void render(Graphics g){
@@ -80,7 +86,7 @@ public class EquipoNinja {
 	}
 	
 	public float getVidaActual(){
-		float vidaActual = 0;
+		float vidaActual = 0;	
 		for (Ninja n : ninjas){
 			vidaActual+= n.getVida();
 		}
@@ -89,18 +95,14 @@ public class EquipoNinja {
 	}
 	
 	public float getVidaTotal(){
-		float vidaTotal = 0;
-		for (Ninja n : ninjas){
-			vidaTotal += n.getVidaMax();
-		}
-		
-		return vidaTotal;
+		return vidaMax;
 	}
 	
 	public void addNinja(Ninja n){
 		n.idequipo = this.id;
 		this.ninjas.add(n);
 		n.setIdequipo(id);
+		vidaMax+= n.getVidaMax();
 	}
 	
 	public void removeNinja(Ninja n){
@@ -168,7 +170,6 @@ public class EquipoNinja {
 			}
 		}
 		if (rta) {
-			//resetBanderasMovYAtt();
 		}
 		
 		return rta;
@@ -178,6 +179,10 @@ public class EquipoNinja {
 		for (Ninja n : ninjas){
 			n.resetBandMyA();
 		}
+	}
+	
+	public boolean teMoriste(){
+		return (getVidaActual() == 0);
 	}
 	
 	public void setColorNombre(Color c){

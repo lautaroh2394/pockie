@@ -64,9 +64,10 @@ public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color no
 	public LinkedList<EquipoNinja> pruebagenerardosequiposunninjaAI(){
 		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
 		
-		EquipoNinja b = generarEquipoColoresNombreHyIAI(1, IDEquipo.CPU, Color.red, Color.blue);
-		EquipoNinja a = generarEquipoColoresNombreHyI(1, IDEquipo.B, Color.magenta, Color.cyan);
-		eq.add(b);eq.add(a);
+		EquipoNinja a = generarEquipoColoresNombreHyI(5, IDEquipo.A, Color.magenta, Color.cyan);
+		EquipoNinja b = generarEquipoColoresNombreHyIAI(5, IDEquipo.CPU, Color.red, Color.blue);
+		
+		eq.add(a);eq.add(b);
 		return eq;
 	}
 	
