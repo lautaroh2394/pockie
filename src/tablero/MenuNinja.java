@@ -62,11 +62,11 @@ public class MenuNinja {
 		}
 	}
 
-	public void decidiQueHacer(int mx, int my, Cuadro c) {
+	public void decidiQueHacer(int mx, int my, Ninja n) {
 
 		for (int i = 0; i < opciones.size(); i++) {
 
-			if (opciones.get(i).queHacer(mx, my, c)) {
+			if (opciones.get(i).queHacer(mx, my, n)) {
 				i = opciones.size();
 			}
 		}
@@ -110,6 +110,17 @@ public class MenuNinja {
 	
 	public void ocultarMenu(){
 		this.ocultarM = true;
+	}
+	
+	public boolean seClickeo(int mx, int my){
+		
+		boolean rta = false;
+		for (OpcionMenuNinja omn : opciones){
+			if (omn.meClickearon(mx, my)){
+				rta = true;
+			}
+		}
+		return rta;
 	}
 
 }

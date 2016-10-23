@@ -5,12 +5,17 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
+import enums.StateMenu;
+import tablero.Cuadro;
 import tablero.Tablero;
 
 public class EquipoNinja {
 	//TODO: POCKIE Hacer que un ninja se pueda mover pero dependiendo de obstaculos qeu tenga, no los puede saltar
 	public LinkedList<Ninja> ninjas;
 	public IDEquipo id;
+	
+	protected boolean activo = false;
+	protected Ninja ninjaActivo;
 	
 	public EquipoNinja(IDEquipo id, LinkedList<Ninja> n){
 		this.ninjas = n;
@@ -22,14 +27,21 @@ public class EquipoNinja {
 		this(id, new LinkedList<Ninja>());
 	}
 	
-	public void tick(){
-		for (Ninja n : ninjas){
-			chequearSiMurio(n);
-			n.tick();
-		}
-	}
+//	public void tick(){
+//		for (Ninja n : ninjas){
+//			chequearSiMurio(n);
+//			n.tick();
+//		}
+//	}
 	
-	private void avisarlesDeQueEquipoSon(LinkedList<Ninja> ninjas){
+	public void tick(){
+	for (Ninja n : ninjas){
+		chequearSiMurio(n);
+		n.tick();
+	}
+}
+	
+	protected void avisarlesDeQueEquipoSon(LinkedList<Ninja> ninjas){
 		if (ninjas!=null){
 		for (Ninja n : ninjas){
 			n.setIdequipo(this.id);
@@ -37,13 +49,7 @@ public class EquipoNinja {
 		}
 	}
 	
-	public void IA(Tablero tab){
-		for (Ninja n : ninjas){
-			n.IA(tab);
-		}
-	}
-	
-	private void chequearSiMurio(Ninja n){
+	protected void chequearSiMurio(Ninja n){
 		if (n.chequearSiMurio()) {
 			murio(n);
 		}
@@ -62,7 +68,7 @@ public class EquipoNinja {
 		return masCercano;
 	}
 	
-	private void murio(Ninja n){
+	protected void murio(Ninja n){
 		n.getCuadro().ninjaSeFue();
 		ninjas.remove(n);
 	}
@@ -101,6 +107,56 @@ public class EquipoNinja {
 		this.ninjas.remove(n);
 	}
 	
+	public boolean esTuClick(int mx, int my){
+		
+		boolean rta = false;
+		for(Ninja n : ninjas){
+			
+			if (n.seClickeo(mx, my)){
+				
+				rta = true;
+				
+				if (n.seClickeoMenu(mx,my)){
+					n.decidiQueHacer(mx,my);
+					n.ocultarMenu();
+
+				}
+				
+				else if (n.seClickeoCuadro(mx,my)){
+					if (menuEstaInstanciado()) {
+						if (n.menuIsNull()){
+							ninjaActivo.toggleMenu();
+							ninjaActivo = n;
+							
+						}
+						else {
+							n.toggleMenu();
+							ninjaActivo = n;
+							
+						}
+					}
+					else {
+						n.toggleMenu();
+						ninjaActivo = n;
+						
+					}
+				}
+			}
+		}
+		return rta;
+		
+		
+	}
+	
+	public void togglearMenuInstanciado(){
+		for (int i = 0 ; i<ninjas.size();i++){
+			if (!ninjas.get(i).menuIsNull()){
+				ninjas.get(i).toggleMenu();
+				i= ninjas.size();
+			}
+		}
+	}
+	
 	public boolean esFinDeTurno(){
 		
 		boolean rta = true;
@@ -112,13 +168,13 @@ public class EquipoNinja {
 			}
 		}
 		if (rta) {
-			resetBanderasMovYAtt();
+			//resetBanderasMovYAtt();
 		}
 		
 		return rta;
 	}
 	
-	private void resetBanderasMovYAtt(){
+	protected void resetBanderasMovYAtt(){
 		for (Ninja n : ninjas){
 			n.resetBandMyA();
 		}
@@ -128,6 +184,38 @@ public class EquipoNinja {
 		for (Ninja  n : ninjas){
 			n.setNombreNormal(c);
 		}
+	}
+	
+	public boolean menuEstaInstanciado(){
+		boolean rta = false;
+		
+		for (int i = 0; i< ninjas.size(); i++){
+			if (!ninjas.get(i).menuIsNull()){
+				rta = true;
+				i = ninjas.size();
+			}
+		}
+		return rta;
+	}
+	
+	public void toggleActivacion(){
+		activo = !activo;
+		resetBanderasMovYAtt();
+		resetMenus();
+	}
+	
+	protected void resetMenus(){
+		for (Ninja n : ninjas){
+			n.resetMenu();
+		}
+	}
+	
+	public IDEquipo getId(){
+		return this.id;
+	}
+	
+	public boolean getActivo(){
+		return activo;
 	}
 
 }

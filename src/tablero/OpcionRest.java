@@ -2,6 +2,7 @@ package tablero;
 
 import enums.OpcionHabilitada;
 import enums.StateMenu;
+import ninjas.Ninja;
 
 public class OpcionRest extends OpcionMenuNinja{
 
@@ -14,11 +15,11 @@ public class OpcionRest extends OpcionMenuNinja{
 	}
 
 	@Override
-	public boolean queHacer(int mx, int my, Cuadro c) {
+	public boolean queHacer(int mx, int my, Ninja n) {
 		if (this.meClickearon(mx, my)){
 			
 			Tablero.stateMenu = StateMenu.NoInstanciado;
-			c.getNinja().rest();
+			n.rest();
 			
 			return true;
 		} else return false;

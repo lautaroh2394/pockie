@@ -2,8 +2,8 @@ package tablero;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Random;
 
 import enums.IDEquipo;
 import enums.StateMenu;
@@ -17,80 +17,90 @@ public class Tablero extends GameObject {
 	
 	public static StateMenu stateMenu = StateMenu.NoInstanciado; 
 	
-	private EquipoNinja equipoA;
-	private EquipoNinja equipoB;
+	private LinkedList<EquipoNinja> equipos;
+	private int equipoActivo;
 	
 	private LinkedList<Cuadro> cuadros;
+	private Cuadro cuadroActivo;
 	
 	private int cantCuadrosEnY;
-	private int cantCuadrosEnX;
+	private int cantCuadrosEnX;	
 	
 	private int hPantalla;
 	private int wPantalla;
 	
-	private Cuadro cuadroActivo;
 	
-	public IDEquipo equipoActivo;
-	public IDEquipo equipoNoActivo;
-	private IDEquipo primeroEnAtacar = IDEquipo.A;
-	private IDEquipo segundoEnAtacar = IDEquipo.B;
 	
 	private Color colorNoP = Color.WHITE;
-	private Color colorPA = Color.red;
-	private Color colorPM = Color.yellow;
 	
 	public Tablero(int hc, int wc, int hPant, int wPant){
+		
+		setUp(hc, wc, hPant, wPant);
+		agregarEquipos();
+		initCuadros();
+		
+	}
+	
+	private void setUp(int hc,int wc,int hPant,int wPant){
 		this.cantCuadrosEnY = hc;
 		this.cantCuadrosEnX = wc;
 		this.hPantalla = hPant;
 		this.wPantalla = wPant;
+	}
+	
+	private void agregarEquipos(){
+		this.equipos = new LinkedList<EquipoNinja>();
+		EquipoNinja a = new EquipoNinja(IDEquipo.A); a.toggleActivacion();
+		equipos.add(a); equipos.add(new EquipoNinja(IDEquipo.B));
 		
-		this.equipoA = new EquipoNinja(IDEquipo.A);
-		this.equipoB = new EquipoNinja(IDEquipo.B);
-		
-		this.cuadros = new LinkedList<Cuadro>();
-		this.initCuadros();
-		this.equipoActivo = primeroEnAtacar;
-		this.equipoNoActivo = segundoEnAtacar;
+		setReferenciaAEquipoActivo();
+	}
+	
+	private void setReferenciaAEquipoActivo(){
+		equipoActivo = equipos.indexOf(getEquipoActivo());
 	}
 	
 	public void addNinja(Ninja ninja, IDEquipo id){
-
-		if (id == IDEquipo.A){ equipoA.addNinja(ninja);}
-		else equipoB.addNinja(ninja);
+		
+		for (int i = 0 ; i< equipos.size();i++){
+			if (equipos.get(i).id == id){
+				equipos.get(i).addNinja(ninja);
+				i = equipos.size();
+			}
+		}
 	}
 	
 	public void removeNinja(Ninja ninja, IDEquipo id){
-
-		if (id == IDEquipo.A){ equipoA.removeNinja(ninja);}
-		else equipoB.removeNinja(ninja);
+		
+		for (int i = 0 ; i< equipos.size();i++){
+			if (equipos.get(i).id == id){
+				equipos.get(i).removeNinja(ninja);
+				i = equipos.size();
+			}
+		}
 	}
 
 	@Override
 	public void tick() {
 
-		ninjasTick();
+		equiposTick();
 		chequearFinDeTurno();
-		
-	}
-
-	public LinkedList<Cuadro> getCuadros() {
-		return cuadros;
-	}
-
-	public void setCuadros(LinkedList<Cuadro> cuadros) {
-		this.cuadros = cuadros;
 	}
 
 	@Override
 	public void render(Graphics g) {
 		
 		this.dibujarTablero(g);
-
-		equipoA.render(g);
-		equipoB.render(g);
+		
+		renderEquipos(g);
 	}
 
+	private void renderEquipos(Graphics g){
+		for (EquipoNinja en : equipos){
+			en.render(g);
+		}
+	}
+	
 	private void dibujarTablero(Graphics g){
 		
 		for(Cuadro c : cuadros){
@@ -99,6 +109,8 @@ public class Tablero extends GameObject {
 	}
 	
 	private void initCuadros(){
+		
+		this.cuadros = new LinkedList<Cuadro>();
 		
 		int xrelTab = 0;
 		int yrelTab = 0;
@@ -132,42 +144,34 @@ public class Tablero extends GameObject {
 		}
 	}
 	
-	public void cuadroClickeadoMenuNinja(int mx, int my){
-		for(Cuadro c : cuadros){
-			
-				if (c.seClickeo(mx,my)){
-						//if (MenuNinja.estadoMenu != StateMenu.NoInstanciado ) {
-						if (Tablero.stateMenu != StateMenu.NoInstanciado ) {
-							if (c.noTieneMenu()){
-								buscarCuadroConMenuYTogglear();
-								return;
-							}
-							else {
-								if (this.equipoActivo == c.getNinja().idequipo){
-									c.getNinja().getMenu().decidiQueHacer(mx, my, c);
-									this.cuadroActivo = c;
-									
-									c.ocultarMenu();/////////////
-									}
-							}
-						}
-						else {
-						c.toggleMenu(this.equipoActivo);
-						}
-					}
-				}
+	public void eventoClick(int mx, int my){
+		
+		boolean rta = getEquipoActivo(equipoActivo).esTuClick(mx, my) ;
+		
+		if (rta) {
+			cuadroActivo = cuadroEnPos(mx, my);
+		}
+		else {
+			getEquipoActivo(equipoActivo).togglearMenuInstanciado();
+		}
 	}
 	
 	
 	
-	private void buscarCuadroConMenuYTogglear(){
-		for(Cuadro c : cuadros){
-			if (!c.ninjaIsNull()){
-				if (!c.getNinja().menuIsNull()){
-					c.toggleMenu(this.equipoActivo);
-				}
+	private EquipoNinja getEquipoActivo(){
+		
+		EquipoNinja eq = null;
+		for (int i = 0; i< equipos.size();i++){
+			if (equipos.get(i).getActivo()){
+				eq = equipos.get(i);
+				i = equipos.size();
 			}
 		}
+		return eq;
+	}
+	
+	private EquipoNinja getEquipoActivo(int equipo){
+		return equipos.get(equipo);
 	}
 	
 	public void seleccionCuadroMov(int mx, int my){
@@ -175,10 +179,9 @@ public class Tablero extends GameObject {
 
 		if (c != null) {
 			if (this.cuadroActivo.getNinja().movete(c)){
-			
-			this.cuadroActivo = null;
+				this.cuadroActivo = null;
 			}
-		}else this.cuadroActivo.toggleMenu(this.equipoActivo);
+		}else this.cuadroActivo.toggleMenu();
 		resetColores();
 	}
 	
@@ -187,9 +190,9 @@ public class Tablero extends GameObject {
 		
 		if (c != null) {
 			if (this.cuadroActivo.getNinja().atacaA(c)){
-			this.cuadroActivo = null;
+				this.cuadroActivo = null;
 			}
-		}else this.cuadroActivo.toggleMenu(this.equipoActivo);
+		}else this.cuadroActivo.toggleMenu();
 		resetColores();
 	}
 	
@@ -204,18 +207,10 @@ public class Tablero extends GameObject {
 		return c;
 	}
 	
-	public void colorearCercanosMov(Ninja n){
+	public void colorearCercanos(Cuadro cuadro, int nro, Color color ){
 		for (Cuadro c : cuadros){
-			if (distancia(c,n.getCuadro())<=n.getDistMov()){
-				c.setColor(colorPM);
-			}
-		}
-	}
-	
-	public void colorearCercanosAtt(Ninja n){
-		for (Cuadro c : cuadros){
-			if (distancia(c,n.getCuadro())<=n.getDistAtt()){
-				c.setColor(colorPA);
+			if (distancia(c,cuadro)<=nro){
+				c.setColor(color);
 			}
 		}
 	}
@@ -228,51 +223,48 @@ public class Tablero extends GameObject {
 		}
 	}
 	
-	private void ninjasTick(){
+	private void equiposTick(){
 		
-		equipoA.tick();
-		equipoB.tick();
+		for (EquipoNinja en : equipos){
+			en.tick();
+		}
 	}
 	
-	private void chequearFinDeTurno(){
-		boolean finTurno;
+	private void chequearFinDeTurno(){		
 		
-		
-		
-		if (equipoActivo == IDEquipo.A){
-			finTurno = equipoA.esFinDeTurno();
-		} else {
-			finTurno = equipoB.esFinDeTurno();
-		}
-		
-		if (finTurno) {
+		if (getEquipoActivo(equipoActivo).esFinDeTurno()){
 			toggleEquipoActivo();
-		}
-	}
-	
-	private void IAEquipo(IDEquipo idActivo){
-		if (IDEquipo.B == idActivo){
-			equipoB.IA(this);}
-		else {
-			
 		}
 	}
 	
 	public Ninja buscarEnemigoCercano(Ninja n){
 		
-		if (n.idequipo == IDEquipo.A){
-			return equipoB.cercanoA(n);
+		//se supone que lo llama siempre un equipo activo
+		int menorDist = 500;
+		Ninja cercano = null;
+		Ninja temp = null;
+		
+		for (EquipoNinja e : equipos){
+			temp = e.cercanoA(n);
+			if (n.distA(temp)<menorDist && e.getId()!=n.getIdEquipo()){
+				
+				menorDist = n.distA(temp);
+				cercano = temp;
+				
+			}
 		}
-		else{
-			return equipoA.cercanoA(n);
-		}
+		
+		return cercano;
 	}
 	
 	private void toggleEquipoActivo(){
-		IDEquipo actual = equipoActivo;
-		equipoActivo = equipoNoActivo;
-		equipoNoActivo = actual;
-		IAEquipo(equipoActivo);
+
+		int actual = equipos.indexOf(getEquipoActivo(equipoActivo));
+		
+		actual = (actual+1) % (equipos.size());
+		equipoActivo = actual;
+		equipos.get(equipoActivo).toggleActivacion();
+		
 		
 	}
 	
@@ -320,30 +312,21 @@ public class Tablero extends GameObject {
 	public void setCantCuadrosEnX(int cantCuadrosEnX) {
 		this.cantCuadrosEnX = cantCuadrosEnX;
 	}
-	
-	public EquipoNinja getEquipoA() {
-		return equipoA;
-	}
-
-	public void setEquipoA(EquipoNinja equipoA) {
-		this.equipoA = equipoA;
-	}
-
-	public EquipoNinja getEquipoB() {
-		return equipoB;
-	}
-
-	public void setEquipoB(EquipoNinja equipoB) {
-		this.equipoB = equipoB;
-	}
-	
-	public void setEquipoBEnRojo(EquipoNinja equipoB) {
-		this.equipoB = equipoB;
-		equipoB.setColorNombre(Color.red);
-	}
-	
+		
 	public Cuadro getCuadroActivo(){
 		return this.cuadroActivo;
+	}
+	
+	public LinkedList<Cuadro> getCuadros() {
+		return cuadros;
+	}
+
+	public void setCuadros(LinkedList<Cuadro> cuadros) {
+		this.cuadros = cuadros;
+	}
+	
+	public void setEquipos(LinkedList<EquipoNinja> e){
+		this.equipos = e;
 	}
 	
 }

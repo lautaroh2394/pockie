@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import enums.OpcionHabilitada;
+import ninjas.Ninja;
 
 public abstract class OpcionMenuNinja {
 	
@@ -47,7 +48,7 @@ public abstract class OpcionMenuNinja {
 		else return false;
 	}
 
-	public abstract boolean queHacer(int mx, int my, Cuadro c);
+	public abstract boolean queHacer(int mx, int my, Ninja c);
 	
 	private boolean enabled(){
 		return (this.enabled == OpcionHabilitada.enabled);

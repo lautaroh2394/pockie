@@ -29,18 +29,8 @@ public class MouseEventsFight extends MouseAdapter{
 	
 	private void eventosMenuNinja(int mx,int my){
 
-//		if (MenuNinja.estadoMenu == StateMenu.NoInstanciado) tab.cuadroClickeadoMenuNinja(mx,my);
-//		
-//		else if( MenuNinja.estadoMenu == StateMenu.SeleccionCuadroMoverNinja) {
-//			tab.seleccionCuadroMov(mx,my);
-//			}
-//		else if( MenuNinja.estadoMenu == StateMenu.SeleccionCuadroAtacarNinja) {
-//			tab.seleccionCuadroAtt(mx,my);
-//			}
-//		else tab.cuadroClickeadoMenuNinja(mx,my);
-//	}
 		
-		if (Tablero.stateMenu == StateMenu.NoInstanciado) tab.cuadroClickeadoMenuNinja(mx,my);
+		if (Tablero.stateMenu == StateMenu.NoInstanciado) tab.eventoClick(mx, my);
 		
 		else if( Tablero.stateMenu  == StateMenu.SeleccionCuadroMoverNinja) {
 			tab.seleccionCuadroMov(mx,my);
@@ -48,7 +38,7 @@ public class MouseEventsFight extends MouseAdapter{
 		else if( Tablero.stateMenu  == StateMenu.SeleccionCuadroAtacarNinja) {
 			tab.seleccionCuadroAtt(mx,my);
 			}
-		else tab.cuadroClickeadoMenuNinja(mx,my);
+		else tab.eventoClick(mx, my);
 	}
 
 }

@@ -1,6 +1,7 @@
 package tablero;
 
 import enums.OpcionHabilitada;
+import ninjas.Ninja;
 
 public class OpcionCancel extends OpcionMenuNinja{
 
@@ -11,9 +12,9 @@ public class OpcionCancel extends OpcionMenuNinja{
 	}
 	
 	@Override
-	public boolean queHacer(int mx, int my, Cuadro c) {//nunca llama a este metodo, cuando clickea en cancelar en MouseEventsFight 
+	public boolean queHacer(int mx, int my, Ninja n) {//nunca llama a este metodo, cuando clickea en cancelar en MouseEventsFight 
 		if (this.meClickearon(mx,my)){
-		this.menu.getN().toggleMenu();
+		n.toggleMenu();
 		return true;
 		} else return false;
 	}

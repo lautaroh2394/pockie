@@ -1,9 +1,14 @@
 package tablero;
 
+import java.awt.Color;
+
 import enums.OpcionHabilitada;
 import enums.StateMenu;
+import ninjas.Ninja;
 
 public class OpcionMover extends OpcionMenuNinja{
+	
+	private Color colorPM = Color.yellow;
 
 	public OpcionMover(int posOpcionCX, int posOpcionCY, int anchoOpcionC, int altoOpcionC, int posSX, int posSY, MenuNinja m) {
 		super(posOpcionCX, posOpcionCY, anchoOpcionC, altoOpcionC, posSX, posSY, m);
@@ -14,11 +19,10 @@ public class OpcionMover extends OpcionMenuNinja{
 	}
 
 	@Override
-	public boolean queHacer(int mx, int my, Cuadro c) {
+	public boolean queHacer(int mx, int my, Ninja n) {
 		if (this.meClickearon(mx,my)){
-		//MenuNinja.estadoMenu = StateMenu.SeleccionCuadroMoverNinja;
 		Tablero.stateMenu = StateMenu.SeleccionCuadroMoverNinja;
-		c.getT().colorearCercanosMov(c.getNinja());
+		n.pediQueTeColoreenLosCercanos(n.getDistMov(), colorPM);
 		
 		return true;
 		} else return false;

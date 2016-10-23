@@ -54,8 +54,9 @@ public class Cuadro {
 		setColor(colorNoPintado);		
 	}
 	
-	public void toggleMenu(IDEquipo id){
-		if (puedeHacerAlgo()) this.ninja.toggleMenu(id);
+	public void toggleMenu(){
+		if (puedeHacerAlgo())
+			this.ninja.toggleMenu();
 	}
 	
 	private boolean puedeHacerAlgo(){
@@ -63,7 +64,7 @@ public class Cuadro {
 	}
 	
 	public void ninjaSeFue(){
-		this.setNinja(null);
+		this.ninja =null;
 	}
 	
 	public boolean noTieneMenu(){

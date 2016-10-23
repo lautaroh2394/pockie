@@ -1,15 +1,8 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.LinkedList;
-import java.util.Random;
-
-import enums.IDEquipo;
-import ninjas.EquipoNinja;
-import ninjas.Ninja;
 import repositorioNinjas.GeneradorNinjas;
-import tablero.Cuadro;
 import tablero.Tablero;
 
 public class Handler {
@@ -18,8 +11,6 @@ public class Handler {
 	private int pantH;
 	
 	private Tablero tab;
-	
-	private Random r = new Random();
 	
 	
 	private Game game;
@@ -54,39 +45,15 @@ public class Handler {
 		this.obj.remove(object);
 	}
 	
-	public void agregarNinPrueba(){
-		
-		int pos1 = r.nextInt(44);
-		int pos2 = r.nextInt(44);
-
-		Cuadro c = tab.getCuadros().get(pos1);
-		Ninja n =new Ninja("sasuke",c,15);
-		n.colorNormal = Color.GREEN;
-		c.setNinja(n);
-		
-		LinkedList<Ninja> l1 = new LinkedList<Ninja>(); l1.add(n);
-		EquipoNinja e1 = new EquipoNinja(IDEquipo.A,l1);
-		
-		c = tab.getCuadros().get(pos2); 
-		n = new Ninja("naruto",c,15);
-		n.colorNormal = Color.RED; 
-		c.setNinja(n);
-		
-		l1 = new LinkedList<Ninja>(); l1.add(n);
-		
-		EquipoNinja e2 = new EquipoNinja(IDEquipo.B,l1);
-		tab.setEquipoA(e1);
-		tab.setEquipoB(e2);
-		
-	}
-	
 	public void agregarEquipos(){
 		GeneradorNinjas gen = new GeneradorNinjas(tab);
 		
-		EquipoNinja a = gen.generarEquipo(4, IDEquipo.A);
-		EquipoNinja b = gen.generarEquipo(4, IDEquipo.B);
-		
-		tab.setEquipoA(a);tab.setEquipoBEnRojo(b);
+		tab.setEquipos(gen.pruebagenerarDosEquipos());
+	}
+	
+	public void agregarUnNinjaAI(){
+		GeneradorNinjas gen = new GeneradorNinjas(tab);
+		tab.setEquipos(gen.pruebagenerardosequiposunninjaAI());
 	}
 	
 	private void agregarTablero(){

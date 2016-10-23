@@ -3,6 +3,8 @@ package enums;
 public enum IDEquipo {
 	
 	A,
-	B;
+	B,
+	CPU,
+	Test;
 
 }

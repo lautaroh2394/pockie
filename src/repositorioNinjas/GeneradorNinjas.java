@@ -1,11 +1,11 @@
 package repositorioNinjas;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
 import enums.IDEquipo;
+import ninjas.EquipoAI;
 import ninjas.EquipoNinja;
 import ninjas.Ninja;
 import tablero.Cuadro;
@@ -34,8 +34,61 @@ public class GeneradorNinjas {
 		return e;
 	}
 	
+public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color nombreH, Color nombreI){
+		
+		Random r = new Random();
+		EquipoNinja e = new EquipoNinja(id);
+		
+		Ninja temp = null;
+		
+		for (int i = 0; i<cant; i++){
+			temp = new Ninja(generarNombre(),generarCuadro(e,id),tam,new Color(r.nextInt(255),r.nextInt(255),r.nextInt(255)));
+			temp.nombreInhabilitado = nombreI;
+			temp.nombreNormal = nombreH;
+			e.addNinja(temp);
+		}
+		
+		return e;
+	}
+	
+	public LinkedList<EquipoNinja> pruebagenerarDosEquipos(){
+		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
+		
+		EquipoNinja a = generarEquipo(4, IDEquipo.A);
+		EquipoNinja b = generarEquipoColoresNombreHyI(4, IDEquipo.B, Color.red, Color.blue);
+		
+		eq.add(a);eq.add(b);
+		return eq;
+	}
+	
+	public LinkedList<EquipoNinja> pruebagenerardosequiposunninjaAI(){
+		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
+		
+		EquipoNinja b = generarEquipoColoresNombreHyIAI(1, IDEquipo.CPU, Color.red, Color.blue);
+		EquipoNinja a = generarEquipoColoresNombreHyI(1, IDEquipo.B, Color.magenta, Color.cyan);
+		eq.add(b);eq.add(a);
+		return eq;
+	}
+	
+	public EquipoNinja generarEquipoColoresNombreHyIAI(int cant, IDEquipo id, Color nombreH, Color nombreI){
+		
+		Random r = new Random();
+		EquipoAI e = new EquipoAI(id);
+		
+		Ninja temp = null;
+		
+		for (int i = 0; i<cant; i++){
+			temp = new Ninja(generarNombre(),generarCuadro(e,id),tam,new Color(r.nextInt(255),r.nextInt(255),r.nextInt(255)));
+			temp.nombreInhabilitado = nombreI;
+			temp.nombreNormal = nombreH;
+			e.addNinja(temp);
+		}
+		
+		return e;
+	}
+	
+	
 	public String generarNombre(){
-		boolean bandera = true;
 		Nombre n = new Nombre();
 		return n.devolverNombre();
 		
@@ -46,7 +99,8 @@ public class GeneradorNinjas {
 		int[] pos;
 		int c = 0;
 		
-		if (id == IDEquipo.A) {pos = posEqA;} else pos = posEqB;
+		if (id == IDEquipo.A) {pos = posEqA;} 
+		else {pos = posEqB;}
 		Random r = new Random();
 		
 		while (bandera) {
@@ -54,6 +108,8 @@ public class GeneradorNinjas {
 			if (noEstaOcupado(pos[c])) {bandera = false;};
 		}
 		return tab.getCuadros().get(pos[c]);
+		
+
 	}
 	
 	private boolean noEstaOcupado(int c){

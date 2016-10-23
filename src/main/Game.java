@@ -19,8 +19,8 @@ public class Game extends Canvas implements Runnable{
 	public Game(){
 		
 		handler = new Handler(WIDTH, HEIGHT,this);
-		//handler.agregarNinPrueba();
-		handler.agregarEquipos();
+		//handler.agregarEquipos();
+		handler.agregarUnNinjaAI();
 		
 		new Ventana(WIDTH,HEIGHT,"Pockie", this);
 		

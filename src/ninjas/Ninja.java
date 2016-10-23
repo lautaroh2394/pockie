@@ -11,231 +11,242 @@ import tablero.MenuNinja;
 import tablero.Tablero;
 
 public class Ninja {
-	
+
 	public String nom;
 	private float att;
 	private float def;
 	private int tam;
 	private float vida;
 	private float vidaMax;
-	
+
 	private int distMov;
 	private int distAtt;
-	
+
 	public Color colorNormal;
 	public Color nombreInhabilitado = Color.cyan;
-	public Color nombreNormal = Color.magenta ;;
-	
+	public Color nombreNormal = Color.magenta;
+
 	private int x;
 	private int y;
-	
+
 	private Cuadro cuadro;
-	
+
 	public boolean banderaMov = false;
 	public boolean banderaAtt = false;
 	private MenuNinja menu;
-	
+
 	public IDEquipo idequipo;
-	
-	public Ninja(String nombre, float ataque, float defensa, Cuadro cuadro, int t){
+
+	public Ninja(String nombre, float ataque, float defensa, Cuadro cuadro, int t) {
 		this.nom = nombre;
 		this.att = ataque;
 		this.def = defensa;
-		this.vida = this.vidaMax =  5* defensa;
+		this.vida = this.vidaMax = 5 * defensa;
 		setXEnCuadro(cuadro, t);
 		setYEnCuadro(cuadro, t);
 		this.tam = t;
-		this.cuadro=cuadro;
+		this.cuadro = cuadro;
 		cuadro.setNinja(this);
 		this.distAtt = 3;
 		this.distMov = 4;
 	}
 
-	public Ninja(String nombre, Cuadro cuadro, int t){
+	public Ninja(String nombre, Cuadro cuadro, int t) {
 		this(nombre, 1000, 1000, cuadro, t);
 	}
-	
-	public Ninja(String nombre, Cuadro cuadro, int t, Color n){
+
+	public Ninja(String nombre, Cuadro cuadro, int t, Color n) {
 		this(nombre, 1000, 1000, cuadro, t);
 		this.colorNormal = n;
 	}
 
-	public void tick(){	
-		//restarVidaPrueba();
+	public void tick() {
+		// restarVidaPrueba();
 	}
-	
-	public void toggleMenu(IDEquipo id){
-		if (this.idequipo == id){
-			
-			if (this.menu == null){
-				this.menu = new MenuNinja(this);}
-			else {
-				//MenuNinja.estadoMenu = StateMenu.NoInstanciado;
+
+	public void toggleMenu() {
+		if (this.idequipo != IDEquipo.CPU) {
+			if (this.menu == null) {
+				this.menu = new MenuNinja(this);
+			} else {
 				Tablero.stateMenu = StateMenu.NoInstanciado;
 				this.menu = null;
-				};
+			}
+			;
 		}
-		
 	}
-	
-	public void toggleMenu(){			
-			if (this.menu == null){
-				this.menu = new MenuNinja(this);}
-			else {
-				//MenuNinja.estadoMenu = StateMenu.NoInstanciado;
-				Tablero.stateMenu = StateMenu.NoInstanciado;
-				this.menu = null;
-				};		
-	}
-	
-	
-	public void render(Graphics g){
-		
+
+	public void render(Graphics g) {
+
 		renderCuerpo(g);
-		renderNombre(g);		
+		renderNombre(g);
 		renderVida(g);
-		
+
 		renderMenu(g);
+		g.drawString(""+enemy+" "+this.cuadro.getPosRelX()+" "+this.cuadro.getPosRelY()+" "+n(), this.x, this.y);
 	}
 	
-	private void renderMenu(Graphics g){
-		if (this.menu != null) this.menu.render(g);
+	public String n(){ if (e!= null) return e.nom; else return "null";}
+
+	private void renderMenu(Graphics g) {
+		if (this.menu != null)
+			this.menu.render(g);
 	}
-	
-	private void renderNombre(Graphics g){
-		if (!puedeHacerAlgo()){
+
+	private void renderNombre(Graphics g) {
+		if (!puedeHacerAlgo()) {
 			g.setColor(nombreInhabilitado);
-		} else g.setColor(nombreNormal);
-		
-		g.drawString(this.nom,(int) (cuadro.getX()+cuadro.getWidth()*0.15),(int) (cuadro.getY()+cuadro.getHeight()*0.26));
-	}
-	
-	public void IA(Tablero t){
-		Ninja enemigo = encontrarEnemigoCercano(t);
-		moverseParaAtacar(enemigo);
-		atacaA(enemigo.getCuadro());
-	}
-	
-	private Ninja encontrarEnemigoCercano(Tablero t){
-		Ninja n = t.buscarEnemigoCercano(this);
-		return n;
-	}
-	
-	private void moverseParaAtacar(Ninja n){
-		
-	}
-	
-	public IDEquipo getIdequipo() {
-		return idequipo;
+		} else
+			g.setColor(nombreNormal);
+
+		g.drawString(this.nom, (int) (cuadro.getX() + cuadro.getWidth() * 0.15),
+				(int) (cuadro.getY() + cuadro.getHeight() * 0.26));
 	}
 
-	public void setIdequipo(IDEquipo idequipo) {
-		this.idequipo = idequipo;
+public int timer =0 ;
+
+	public String enemy;
+	public Ninja e=null;
+	public void IA() {//hay que refinar, pero la base base esta
+		timer++;
+		if (!banderaMov && timer>=200){
+			if (e == null){	Tablero t = getCuadro().getT(); e = t.buscarEnemigoCercano(this); enemy = e.nom;moverseParaAtacar(e, t);}
+		 
+		 timer = 0;
+		 }
+		if (!banderaAtt&&timer>=200){
+			if (puedeAtacar(e)){
+		atacaA(e.getCuadro());setBanderaAtt(false);timer =0;}
+			
+		}
+	}
+	
+	private boolean puedeAtacar(Ninja c){
+		if (c != null){
+		return distancia(c.getCuadro(),this.cuadro,this.distAtt);} else return false;
 	}
 
-	public boolean puedeHacerAlgo(){
+	private boolean moverseParaAtacar(Ninja n, Tablero t) {
+		 for (Cuadro c : t.getCuadros()){
+			 if (distancia(n.getCuadro(),c,this.distAtt) && puedoMovermeA(c)){
+				 movete(c);
+				 return true;
+			 };
+		 }
+		return true;
+	}
+
+	private boolean puedoMovermeA(Cuadro cuadro) {
+		return (distancia(this.cuadro, cuadro, this.distMov) && !banderaMov && cuadro != this.cuadro
+				&& cuadro.ninjaIsNull());
+	}
+
+	public boolean puedeHacerAlgo() {
 		return !(banderaAtt && banderaMov);
 	}
-	
-	private void renderCuerpo(Graphics g){
+
+	private void renderCuerpo(Graphics g) {
 		g.setColor(this.colorNormal);
 		g.fillRect(x, y, tam, tam);
 	}
-	
-	private void renderVida(Graphics g){
+
+	private void renderVida(Graphics g) {
 		g.setColor(Color.GREEN);
-		g.fillRect((int) (cuadro.getX()+2),
-				(int) (cuadro.getY()+cuadro.getHeight()*0.03),
-				(int) ((cuadro.getWidth()-4)*(vida)/vidaMax), 5);
+		g.fillRect((int) (cuadro.getX() + 2), (int) (cuadro.getY() + cuadro.getHeight() * 0.03),
+				(int) ((cuadro.getWidth() - 4) * (vida) / vidaMax), 5);
 	}
-	
-	public boolean menuIsNull(){
-		return (this.menu == null);
-	}
-	
-	public boolean movete(Cuadro cuadro){
-		if (distancia(this.cuadro, cuadro, this.distMov)){
-			if (!banderaMov && cuadro != this.cuadro && cuadro.ninjaIsNull()){
-			
+
+	public boolean movete(Cuadro cuadro) {
+		if (puedoMovermeA(cuadro)) {
 			setXEnCuadro(cuadro, this.tam);
 			setYEnCuadro(cuadro, this.tam);
 			this.cuadro.ninjaSeFue();
 			this.setCuadro(cuadro);
 			cuadro.setNinja(this);
-			
+
 			this.toggleMenu();
 			meMovi();
-			
-			return true;
-			
-		}
-		else {this.toggleMenu();return false;}
 
+			return true;
+		} else {
+			this.toggleMenu();
+			return false;
 		}
-		else {this.toggleMenu();return false;}
 	}
-	
-	public boolean distancia(Cuadro c1, Cuadro c2, int d){
-		return ( ( (Math.abs(c1.getPosRelX() - c2.getPosRelX()))+(Math.abs(c1.getPosRelY()-c2.getPosRelY()) ) ) <= d );
+
+	public boolean distancia(Cuadro c1, Cuadro c2, int d) {
+		return (((Math.abs(c1.getPosRelX() - c2.getPosRelX())) + (Math.abs(c1.getPosRelY() - c2.getPosRelY()))) <= d);
 	}
-	
-	public int distA(Ninja n){
-		return ( (Math.abs(this.getCuadro().getPosRelX() - n.getCuadro().getPosRelX()))+(Math.abs(this.getCuadro().getPosRelY()-n.getCuadro().getPosRelY()) ) );
+
+	public int distA(Ninja n) {
+		return ((Math.abs(this.getCuadro().getPosRelX() - n.getCuadro().getPosRelX()))
+				+ (Math.abs(this.getCuadro().getPosRelY() - n.getCuadro().getPosRelY())));
 	}
-	
+
 	private void meMovi() {
 		this.banderaMov = true;
-		
+
 	}
-	
+
 	private void yaAtaque() {
 		this.banderaAtt = true;
-		
-	}
-
-	public boolean atacaA(Cuadro cuadro){
-			if (distancia(this.cuadro, cuadro, this.distAtt)){
-				if (!banderaAtt && !cuadro.ninjaIsNull() && this.cuadro != cuadro && (cuadro.getNinja().idequipo != this.idequipo)){
-					cuadro.atacaronATuNinja(this.att);
-					this.toggleMenu();
-					this.yaAtaque(); this.meMovi();
-					
-					return true;
-				}
-				else {this.toggleMenu(); return false;}
-				
-			} else {this.toggleMenu();return false;}
 
 	}
-	
-	public void teAtacaron(float danio){
+
+	public boolean atacaA(Cuadro cuadro) {
+		if (distancia(this.cuadro, cuadro, this.distAtt)) {
+			if (!banderaAtt && !cuadro.ninjaIsNull() && this.cuadro != cuadro
+					&& (cuadro.getNinja().idequipo != this.idequipo)) {
+				cuadro.atacaronATuNinja(this.att);
+				this.toggleMenu();
+				this.yaAtaque();
+				this.meMovi();
+
+				return true;
+			} else {
+				this.toggleMenu();
+				return false;
+			}
+
+		} else {
+			this.toggleMenu();
+			return false;
+		}
+
+	}
+
+	public void teAtacaron(float danio) {
 		this.restarVida(danio);
 	}
-	
-	private void restarVida(float v){
-		if (v>vida) {
+
+	private void restarVida(float v) {
+		if (v > vida) {
 			vida = 0;
-			}
-		else vida-= v;
+		} else
+			vida -= v;
 	}
-	
-	private void restarVidaPrueba(){
+
+	private void restarVidaPrueba() {
 		Random r = new Random();
-		if (r.nextInt(10)<4) { restarVida(10);};
-	}
-	
-	public boolean chequearSiMurio(){
-		if (vida <= 0){
-			return true;
+		if (r.nextInt(10) < 4) {
+			restarVida(10);
 		}
-		else return false;
+		;
 	}
-	
-	public void rest(){
+
+	public boolean chequearSiMurio() {
+		if (vida <= 0) {
+			return true;
+		} else
+			return false;
+	}
+
+	public void rest() {
 		setBanderaAtt(true);
 		setBanderaMov(true);
+		toggleMenu();
 	}
-	
+
 	public MenuNinja getMenu() {
 		return menu;
 	}
@@ -243,8 +254,8 @@ public class Ninja {
 	public void setMenu(MenuNinja menu) {
 		this.menu = menu;
 	}
-	
-	public void resetBandMyA(){
+
+	public void resetBandMyA() {
 		this.banderaAtt = false;
 		this.banderaMov = false;
 	}
@@ -256,31 +267,31 @@ public class Ninja {
 	public void setCuadro(Cuadro cuadro) {
 		this.cuadro = cuadro;
 	}
-	
-	public void setX(int x){
-		this.x=x;
+
+	public void setX(int x) {
+		this.x = x;
 	}
-	
-	public void setY(int y){
-		this.y=y;
+
+	public void setY(int y) {
+		this.y = y;
 	}
-	
-	public float getX(){
+
+	public float getX() {
 		return x;
 	}
-	
-	public float getY(){
+
+	public float getY() {
 		return y;
 	}
-	
-	private void setXEnCuadro(Cuadro cuadro, int t){
-		this.x = cuadro.getX()+ ((cuadro.getWidth()- t)/2);
+
+	private void setXEnCuadro(Cuadro cuadro, int t) {
+		this.x = cuadro.getX() + ((cuadro.getWidth() - t) / 2);
 	}
-	
-	private void setYEnCuadro(Cuadro cuadro, int t){
-		this.y = cuadro.getY()+ ((cuadro.getHeight()- t)/2);
+
+	private void setYEnCuadro(Cuadro cuadro, int t) {
+		this.y = cuadro.getY() + ((cuadro.getHeight() - t) / 2);
 	}
-	
+
 	public float getVida() {
 		return vida;
 	}
@@ -328,7 +339,7 @@ public class Ninja {
 	public void setVidaMax(float vidaMax) {
 		this.vidaMax = vidaMax;
 	}
-	
+
 	public Color getNombreNormal() {
 		return nombreNormal;
 	}
@@ -337,5 +348,67 @@ public class Ninja {
 		this.nombreNormal = nombreNormal;
 	}
 
-	
+	public IDEquipo getIdequipo() {
+		return idequipo;
+	}
+
+	public void setIdequipo(IDEquipo idequipo) {
+		this.idequipo = idequipo;
+	}
+
+	public boolean menuIsNull() {
+		return (this.menu == null);
+	}
+
+	public IDEquipo getIdEquipo() {
+		return this.idequipo;
+	}
+
+	public boolean seClickeo(int mx, int my) {
+		if (clickCuadroOMenu(mx, my) && puedeHacerAlgo()) {
+			return true;
+		} else
+			return false;
+	}
+
+	private boolean clickCuadroOMenu(int mx, int my) {
+		return (seClickeoCuadro(mx, my) || seClickeoMenu(mx, my));
+	}
+
+	public boolean seClickeoCuadro(int mx, int my) {
+		return getCuadro().seClickeo(mx, my);
+	}
+
+	public boolean seClickeoMenu(int mx, int my) {
+		if (!menuIsNull()) {
+			return getMenu().seClickeo(mx, my);
+		} else
+			return false;
+	}
+
+	public void ocultarMenu() {
+		if (!menuIsNull()) {
+			menu.ocultarMenu();
+		}
+	}
+
+	public void decidiQueHacer(int mx, int my) {
+		menu.decidiQueHacer(mx, my, this);
+	}
+
+	public void pediQueTeColoreenLosCercanos(int nro, Color c) {
+
+		getTablero().colorearCercanos(getCuadro(), nro, c);
+	}
+
+	private Tablero getTablero() {
+		return getCuadro().getT();
+	}
+
+	public void resetMenu() {
+		if (!menuIsNull()) {
+			toggleMenu();
+		}
+	}
+
 }
