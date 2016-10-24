@@ -7,6 +7,7 @@ import java.util.Random;
 
 import enums.IDEquipo;
 import enums.StateMenu;
+import ia.IA;
 import tablero.Cuadro;
 import tablero.MenuNinja;
 import tablero.Tablero;
@@ -37,6 +38,8 @@ public class Ninja {
 	private MenuNinja menu;
 
 	public IDEquipo idequipo;
+	
+	private ia.IA ia;
 
 	public Ninja(String nombre, float ataque, float defensa, Cuadro cuadro, int t) {
 		this.nom = nombre;
@@ -103,36 +106,37 @@ public class Ninja {
 
 	public void IA() {	//hay que refinar, pero la base base esta
 						//TODO: arreglar la hiper velocidad con la que atacan y se mueven solos 
-		int timer =0 ;
-		boolean b=false;
-		
-		while (!b){
-			
-		timer++;
-		Tablero t = getCuadro().getT();
-		Ninja e = null;
-		if( !elOtroEquipoEstaMuerto(this.idequipo)){
-			e = t.buscarEnemigoCercano(this);
-		}
-		if (!banderaMov && timer>=500){
- 
-			if (e != null)
-				{
-				moverseParaAtacar(e, t);
-				}
-		 
-		 timer = 0;
-		 }
-		if (!banderaAtt&&timer>=500){
-			if (puedeAtacar(e))
-			{
-				atacaA(e.getCuadro());
-				timer =0;
-				}
-			else rest();
-			}
-		if (!this.puedeHacerAlgo()){ b= true;}
-		}
+//		int timer =0 ;
+//		boolean b=false;
+//		
+//		while (!b){
+//			
+//		timer++;
+//		Tablero t = getCuadro().getT();
+//		Ninja e = null;
+//		if( !elOtroEquipoEstaMuerto(this.idequipo)){
+//			e = t.buscarEnemigoCercano(this);
+//		}
+//		if (!banderaMov && timer>=500){
+// 
+//			if (e != null)
+//				{
+//				moverseParaAtacar(e, t);
+//				}
+//		 
+//		 timer = 0;
+//		 }
+//		if (!banderaAtt&&timer>=500){
+//			if (puedeAtacar(e))
+//			{
+//				atacaA(e.getCuadro());
+//				timer =0;
+//				}
+//			else rest();
+//			}
+//		if (!this.puedeHacerAlgo()){ b= true;}
+//		}
+		ia.accionAutomatica(this,this.getCuadro().getT());
 	}
 	
 	private boolean elOtroEquipoEstaMuerto(IDEquipo id){
@@ -146,8 +150,6 @@ public class Ninja {
 
 	private void moverseParaAtacar(Ninja n, Tablero t) {
 		Random r = new Random();
-		Cuadro temp;
-		boolean b = true;
 		LinkedList<Cuadro> cquemepuedomover = new LinkedList<Cuadro>();
 		LinkedList<Cuadro> cquepuedoAtacarsimemuevoono = new LinkedList<Cuadro>();
 		for (Cuadro c : t.getCuadros()){
@@ -441,6 +443,10 @@ public class Ninja {
 		if (!menuIsNull()) {
 			toggleMenu();
 		}
+	}
+	
+	public void setIA(IA ia){
+		this.ia = ia;
 	}
 
 }

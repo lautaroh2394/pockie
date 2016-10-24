@@ -2,13 +2,10 @@ package ninjas;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
-import enums.StateMenu;
-import tablero.Cuadro;
-import tablero.Tablero;
+import ia.iaMovGrilla;
 
 public class EquipoNinja {
 	//TODO: POCKIE Hacer que un ninja se pueda mover pero dependiendo de obstaculos qeu tenga, no los puede saltar
@@ -30,8 +27,7 @@ public class EquipoNinja {
 		this(id, new LinkedList<Ninja>());
 	}
 	
-	public void tick(){ //TODO: arreglar los problemas de concurrencia (concurrentmodificationexception)
-						//ver lo de como solucionar usando iterator
+	public void tick(){ 
 		for (Ninja n : ninjas){
 				n.tick();
 			}

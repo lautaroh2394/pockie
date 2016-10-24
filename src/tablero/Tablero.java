@@ -3,7 +3,6 @@ package tablero;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
@@ -13,8 +12,6 @@ import ninjas.EquipoNinja;
 import ninjas.Ninja;
 
 public class Tablero extends GameObject {
-	
-	//TODO: ia del equipo malo, aunque sea chota, que se muevan solos. esta implementado algo pero estoy cansado y cero ganas de ver porqeu
 	
 	public static StateMenu stateMenu = StateMenu.NoInstanciado; 
 	
@@ -51,14 +48,6 @@ public class Tablero extends GameObject {
 		this.hPantalla = hPant;
 		this.wPantalla = wPant;
 	}
-	
-//	private void agregarEquipos(){
-//		this.equipos = new LinkedList<EquipoNinja>();
-//		EquipoNinja a = new EquipoNinja(IDEquipo.A); a.toggleActivacion();
-//		equipos.add(a); equipos.add(new EquipoNinja(IDEquipo.B));
-//		
-//		setReferenciaAEquipoActivo();
-//	}
 	
 	private void agregarEquipos(LinkedList<EquipoNinja> e){
 		this.equipos = new LinkedList<EquipoNinja>();
@@ -192,9 +181,7 @@ public class Tablero extends GameObject {
 			getEquipoActivo(equipoActivo).togglearMenuInstanciado();
 		}
 	}
-	
-	
-	
+		
 	private EquipoNinja getEquipoActivo(){
 		
 		if (equipoActivo != -1) {
@@ -274,15 +261,7 @@ public class Tablero extends GameObject {
 		
 		getEquipoActivo().tick();
 	}
-	
-	private LinkedList<EquipoNinja> getEquiposNoActivo(){
-		LinkedList<EquipoNinja> noact = new LinkedList<EquipoNinja>(); 
-		for (EquipoNinja eq : equipos){
-			if (eq != getEquipoActivo()) {noact.add(eq);}
-		}
-		return noact;
-	}
-	
+		
 	private void chequearFinDeTurno(){		
 		
 		if (getEquipoActivo().esFinDeTurno()){
@@ -374,7 +353,6 @@ public class Tablero extends GameObject {
 		return cuadros.get(n).getX();
 	}
 		
-	
 	public int getPosDeCuadroY(int n){
 		return cuadros.get(9*n).getY();
 	}

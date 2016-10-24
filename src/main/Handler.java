@@ -3,7 +3,6 @@ package main;
 import java.awt.Graphics;
 import java.util.LinkedList;
 import repositorioNinjas.GeneradorNinjas;
-import tablero.HUD;
 import tablero.Tablero;
 
 public class Handler {

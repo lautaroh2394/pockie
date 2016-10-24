@@ -2,8 +2,6 @@ package tablero;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
-import enums.IDEquipo;
 import ninjas.Ninja;
 
 public class Cuadro {

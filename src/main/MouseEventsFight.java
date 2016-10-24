@@ -3,9 +3,7 @@ package main;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import enums.IDEquipo;
 import enums.StateMenu;
-import tablero.MenuNinja;
 import tablero.Tablero;
 
 public class MouseEventsFight extends MouseAdapter{

@@ -1,10 +1,9 @@
 package ninjas;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
-import tablero.Tablero;
+import ia.iaMovGrilla;
 
 public class EquipoAI extends EquipoNinja {
 
@@ -23,5 +22,11 @@ public class EquipoAI extends EquipoNinja {
 				n.IA();
 				}
 		}
+	
+	@Override
+	public void addNinja(Ninja n){
+		super.addNinja(n);
+		n.setIA(new iaMovGrilla());
+	}
 
 }
