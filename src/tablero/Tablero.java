@@ -268,7 +268,19 @@ public class Tablero extends GameObject {
 	
 	private void equiposTick(){
 		
+		for (EquipoNinja e : equipos){
+			e.controlarMuertos();
+		}
+		
 		getEquipoActivo().tick();
+	}
+	
+	private LinkedList<EquipoNinja> getEquiposNoActivo(){
+		LinkedList<EquipoNinja> noact = new LinkedList<EquipoNinja>(); 
+		for (EquipoNinja eq : equipos){
+			if (eq != getEquipoActivo()) {noact.add(eq);}
+		}
+		return noact;
 	}
 	
 	private void chequearFinDeTurno(){		

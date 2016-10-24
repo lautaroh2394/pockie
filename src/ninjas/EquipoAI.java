@@ -1,5 +1,6 @@
 package ninjas;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
@@ -18,10 +19,9 @@ public class EquipoAI extends EquipoNinja {
 	@Override
 	public void tick(){
 			for (Ninja n : ninjas){
-				chequearSiMurio(n);
 				n.tick();
 				n.IA();
-			}
+				}
 		}
 
 }

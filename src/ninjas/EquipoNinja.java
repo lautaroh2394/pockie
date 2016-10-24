@@ -2,6 +2,7 @@ package ninjas;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
@@ -31,31 +32,36 @@ public class EquipoNinja {
 	
 	public void tick(){ //TODO: arreglar los problemas de concurrencia (concurrentmodificationexception)
 						//ver lo de como solucionar usando iterator
-//	for (Ninja n : ninjas){
-//		n.tick();
-//		chequearSiMurio(n);
-//		
-//	}
-		
-		for (int i = 0; i< ninjas.size(); i++){
-			ninjas.get(i).tick();
-			chequearSiMurio(ninjas.get(i));
+		for (Ninja n : ninjas){
+				n.tick();
+			}
 
+	}
+	
+	public void controlarMuertos(){
+		LinkedList<Ninja> muertos = new LinkedList<Ninja>();
+		for (Ninja n : ninjas){
+			if (n.chequearSiMurio()){
+				muertos.add(n);
+			}
 		}
-}
+		
+		borrarMuertos(muertos);
+	}
 	
 	protected void avisarlesDeQueEquipoSon(LinkedList<Ninja> ninjas){
 		if (ninjas!=null){
-		for (Ninja n : ninjas){
-			n.setIdequipo(this.id);
-			vidaMax+=n.getVidaMax();
-		}
+			for (Ninja n : ninjas){
+				n.setIdequipo(this.id);
+				vidaMax+=n.getVidaMax();
+			}
 		}
 	}
 	
-	protected void chequearSiMurio(Ninja n){
-		if (n.chequearSiMurio()) {
-			murio(n);
+	private void borrarMuertos(LinkedList<Ninja> muertos){
+		for (Ninja n : muertos){
+			this.murio(n);
+//			this.removeNinja(n);
 		}
 	}
 	
@@ -75,8 +81,7 @@ public class EquipoNinja {
 	
 	protected void murio(Ninja n){
 		n.getCuadro().ninjaSeFue();
-		ninjas.remove(n);
-//		n.moriste();
+		this.removeNinja(n);
 	}
 	
 	public void render(Graphics g){
