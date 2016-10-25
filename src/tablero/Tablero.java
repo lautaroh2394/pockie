@@ -394,4 +394,14 @@ public class Tablero extends GameObject {
 		return this.equipos;
 	}
 	
+	public EquipoNinja getEnemigos(Ninja n){
+		//teniendo en cuetna que solo hay dos equipos
+		EquipoNinja enemigos = null;
+			for (EquipoNinja eq : getEquipos()){
+				if (eq.id != n.getIdEquipo()){
+					enemigos = eq;
+				}
+			}
+		return enemigos;
+		}
 }

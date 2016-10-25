@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
+import ia.IABasica;
+import ninjas.EquipoAI;
 import ninjas.EquipoNinja;
 import repositorioNinjas.GeneradorNinjas;
 import tablero.Tablero;
@@ -58,7 +60,9 @@ public class Handler {
 	public void agregarEquiposUnIA(int cant){
 		GeneradorNinjas gen = new GeneradorNinjas(tab);
 		EquipoNinja e1 = gen.generarEquipoColoresNombreHyI(cant, IDEquipo.A, Color.MAGENTA, Color.CYAN);
-		EquipoNinja e2 = gen.generarEquipoColoresNombreHyIAI(cant, IDEquipo.CPU, Color.RED, Color.blue);
+		EquipoAI e2 = gen.generarEquipoColoresNombreHyIAI(cant, IDEquipo.CPU, Color.RED, Color.blue);
+		
+//		e2.setIA(new IABasica());
 		
 		LinkedList<EquipoNinja> equipos = new LinkedList<EquipoNinja>();
 		equipos.add(e1);

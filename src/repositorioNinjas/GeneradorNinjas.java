@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import enums.IDEquipo;
+import ia.IABasica;
 import ninjas.EquipoAI;
 import ninjas.EquipoNinja;
 import ninjas.Ninja;
@@ -37,7 +38,7 @@ public class GeneradorNinjas {
 		return e;
 	}
 	
-public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color nombreH, Color nombreI){
+	public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color nombreH, Color nombreI){
 		
 		Random r = new Random();
 		EquipoNinja e = new EquipoNinja(id);
@@ -53,18 +54,8 @@ public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color no
 		
 		return e;
 	}
-	
-	public LinkedList<EquipoNinja> generarDosEquipos(int cant){
-		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
-		
-		EquipoNinja a = generarEquipo(cant, IDEquipo.A);
-		EquipoNinja b = generarEquipoColoresNombreHyI(cant, IDEquipo.B, Color.red, Color.blue);
-		
-		eq.add(a);eq.add(b);
-		return eq;
-	}
-	
-	public EquipoNinja generarEquipoColoresNombreHyIAI(int cant, IDEquipo id, Color nombreH, Color nombreI){
+
+	public EquipoAI generarEquipoColoresNombreHyIAI(int cant, IDEquipo id, Color nombreH, Color nombreI){
 		
 		Random r = new Random();
 		EquipoAI e = new EquipoAI(id);
@@ -77,11 +68,20 @@ public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color no
 			temp.nombreNormal = nombreH;
 			e.addNinja(temp);
 		}
-		
+		e.setIA(new IABasica());
 		return e;
 	}
 	
-	
+	public LinkedList<EquipoNinja> generarDosEquipos(int cant){
+		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
+		
+		EquipoNinja a = generarEquipo(cant, IDEquipo.A);
+		EquipoNinja b = generarEquipoColoresNombreHyI(cant, IDEquipo.B, Color.red, Color.blue);
+		
+		eq.add(a);eq.add(b);
+		return eq;
+	}
+		
 	public String generarNombre(){
 		return nombre.devolverNombre();
 		

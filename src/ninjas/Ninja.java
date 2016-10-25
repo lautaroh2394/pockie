@@ -22,7 +22,7 @@ public class Ninja {
 	private float vidaMax;
 
 	private int distMov;
-	private int distAtt;
+	public int distAtt;
 
 	public Color colorNormal;
 	public Color nombreInhabilitado = Color.cyan;
@@ -32,16 +32,12 @@ public class Ninja {
 	private int y;
 
 	private Cuadro cuadro;
-	
-	private Ninja enemigo;
 
 	public boolean banderaMov = false;
 	public boolean banderaAtt = false;
 	private MenuNinja menu;
 
 	public IDEquipo idequipo;
-	
-	private ia.IA ia;
 
 	public Ninja(String nombre, float ataque, float defensa, Cuadro cuadro, int t) {
 		this.nom = nombre;
@@ -109,43 +105,17 @@ public class Ninja {
 	
 	public long timer = 0;
 	public long tiempodeespera = 50;
-	public synchronized void IA() {
-		//hay que refinar, pero la base base esta
-		//si encuentra enemigo: busca una pos random desde donde atacarlo
-		//si encuentra enemigo y no puede atacarlo por mas que se mueva: se mueve a una pos random de las que puede alcanzar
-		//si no puede al enemigo, rest.
-		//si no puede atacar ni moverse (banderas en true), el metodo que lo llama se encarga de decirle que 'restee'.
-		timer++;
-		Tablero t = getCuadro().getT();
-		
-		enemigo = t.buscarEnemigoCercano(this);
-				
-		if (!banderaMov && timer >= tiempodeespera){
-			moverseParaAtacar(enemigo, t);
-			timer = 0;
-		 }
-		
-		if (!banderaAtt && timer>=tiempodeespera){
-			if (puedeAtacar(enemigo)){
-				atacaA(enemigo.getCuadro());
-				timer = 0;			
-				}
-			else rest();
-		}
-
-//		ia.accionAutomatica(this,this.getCuadro().getT());
+	
+	public synchronized void IA(IA inta) {
+		inta.accionAutomatica(this,this.getCuadro().getT());
 	}
 	
-	private boolean elOtroEquipoEstaMuerto(IDEquipo id){
-		return getCuadro().getT().unicoVivo(id);
-	}
-	
-	private boolean puedeAtacar(Ninja c){
+	public boolean puedeAtacar(Ninja c){
 		if (c != null){
 		return distancia(c.getCuadro(),this.cuadro,this.distAtt);} else return false;
 	}
 
-	private void moverseParaAtacar(Ninja n, Tablero t) {
+	public void moverseParaAtacar(Ninja n, Tablero t) {
 		Random r = new Random();
 		LinkedList<Cuadro> cquemepuedomover = new LinkedList<Cuadro>();
 		LinkedList<Cuadro> cquepuedoAtacarsimemuevoono = new LinkedList<Cuadro>();
@@ -167,7 +137,7 @@ public class Ninja {
 		else this.rest();
 	}
 
-	private boolean puedoMovermeA(Cuadro cuadro) {
+	public boolean puedoMovermeA(Cuadro cuadro) {
 		return (distancia(this.cuadro, cuadro, this.distMov) && !banderaMov && cuadro != this.cuadro
 				&& cuadro.ninjaIsNull());
 	}
@@ -228,12 +198,14 @@ public class Ninja {
 		if (distancia(this.cuadro, cuadro, this.distAtt)) {
 			if (!banderaAtt && !cuadro.ninjaIsNull() && this.cuadro != cuadro
 					&& (cuadro.getNinja().idequipo != this.idequipo)) {
+				
 				cuadro.atacaronATuNinja(this.att);
 				this.toggleMenu();
 				this.yaAtaque();
 				this.meMovi();
 
 				return true;
+				
 			} else {
 				this.toggleMenu();
 				return false;
@@ -379,10 +351,6 @@ public class Ninja {
 		this.nombreNormal = nombreNormal;
 	}
 
-	public IDEquipo getIdequipo() {
-		return idequipo;
-	}
-
 	public void setIdequipo(IDEquipo idequipo) {
 		this.idequipo = idequipo;
 	}
@@ -442,8 +410,4 @@ public class Ninja {
 		}
 	}
 	
-	public void setIA(IA ia){
-		this.ia = ia;
-	}
-
 }
