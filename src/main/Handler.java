@@ -62,8 +62,6 @@ public class Handler {
 		EquipoNinja e1 = gen.generarEquipoColoresNombreHyI(cant, IDEquipo.A, Color.MAGENTA, Color.CYAN);
 		EquipoAI e2 = gen.generarEquipoColoresNombreHyIAI(cant, IDEquipo.CPU, Color.RED, Color.blue);
 		
-//		e2.setIA(new IABasica());
-		
 		LinkedList<EquipoNinja> equipos = new LinkedList<EquipoNinja>();
 		equipos.add(e1);
 		equipos.add(e2);

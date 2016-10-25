@@ -10,6 +10,7 @@ import enums.StateMenu;
 import main.GameObject;
 import ninjas.EquipoNinja;
 import ninjas.Ninja;
+import ninjas.Obstaculo;
 
 public class Tablero extends GameObject {
 	
@@ -20,6 +21,8 @@ public class Tablero extends GameObject {
 	
 	private LinkedList<Cuadro> cuadros;
 	private Cuadro cuadroActivo;
+	
+	private LinkedList<Obstaculo> obstaculos;
 	
 	private int cantCuadrosEnY;
 	private int cantCuadrosEnX;	
@@ -39,6 +42,7 @@ public class Tablero extends GameObject {
 //		agregarEquipos();
 		initCuadros();
 		hud = new HUD(hPant,wPant);
+		obstaculos = new LinkedList<Obstaculo>();
 		
 	}
 	
@@ -99,6 +103,7 @@ public class Tablero extends GameObject {
 		
 		this.dibujarTablero(g);		
 		renderEquipos(g);
+		renderObstaculos(g);
 		hud.render(g);
 		
 		if (finDeJuego){
@@ -109,6 +114,14 @@ public class Tablero extends GameObject {
 	private void renderEquipos(Graphics g){
 		for (EquipoNinja en : equipos){
 			en.render(g);
+		}
+	}
+	
+	private void renderObstaculos(Graphics g){
+		if (obstaculos.size()>0){
+			for(Obstaculo o : obstaculos){
+				o.render(g);
+			}
 		}
 	}
 	
@@ -211,7 +224,7 @@ public class Tablero extends GameObject {
 			if (this.cuadroActivo.getNinja().movete(c)){
 				this.cuadroActivo = null;
 			}
-		}else this.cuadroActivo.toggleMenu();
+		}else getEquipoActivo(equipoActivo).togglearMenuInstanciado();
 		resetColores();
 	}
 	
@@ -222,7 +235,7 @@ public class Tablero extends GameObject {
 			if (this.cuadroActivo.getNinja().atacaA(c)){
 				this.cuadroActivo = null;
 			}
-		}else this.cuadroActivo.toggleMenu();
+		}else getEquipoActivo(equipoActivo).togglearMenuInstanciado();
 		resetColores();
 	}
 	
@@ -234,6 +247,7 @@ public class Tablero extends GameObject {
 				i = cuadros.size();
 			}
 		}
+
 		return c;
 	}
 	
@@ -404,4 +418,10 @@ public class Tablero extends GameObject {
 			}
 		return enemigos;
 		}
+	
+	public void agregarObstaculo(Cuadro c){
+		Obstaculo o = new Obstaculo("obs",c,30,Color.GREEN);
+		c.setObstaculo(o);
+		obstaculos.add(o);
+	}
 }

@@ -2,7 +2,10 @@ package tablero;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
+import enums.IDEquipo;
 import ninjas.Ninja;
+import ninjas.Obstaculo;
 
 public class Cuadro {
 	
@@ -165,6 +168,11 @@ public class Cuadro {
 	
 	public Tablero getT() {
 		return t;
+	}
+	
+	public void setObstaculo(Obstaculo o){
+		setNinja(o);
+		o.setIdequipo(IDEquipo.Obs);
 	}
 
 

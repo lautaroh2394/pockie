@@ -106,8 +106,10 @@ public class Ninja {
 	public long timer = 0;
 	public long tiempodeespera = 50;
 	
+	public LinkedList<Cuadro> pasos;//borrar
 	public synchronized void IA(IA inta) {
-		inta.accionAutomatica(this,this.getCuadro().getT());
+//		inta.accionAutomatica(this,this.getCuadro().getT());
+//		pasos = inta.puedeMoverseA(this,this.getCuadro().getT().getCuadros().get(22),this.getCuadro().getT());
 	}
 	
 	public boolean puedeAtacar(Ninja c){
@@ -146,7 +148,7 @@ public class Ninja {
 		return !(banderaAtt && banderaMov);
 	}
 
-	private void renderCuerpo(Graphics g) {
+	protected void renderCuerpo(Graphics g) {
 		g.setColor(this.colorNormal);
 		g.fillRect(x, y, tam, tam);
 	}

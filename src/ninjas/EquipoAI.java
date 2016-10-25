@@ -7,7 +7,8 @@ import ia.IA;
 
 public class EquipoAI extends EquipoNinja {
 	
-	private IA ia;
+//	private IA ia;
+	public IA ia;
 
 	public EquipoAI(IDEquipo id, LinkedList<Ninja> n){
 		super(id,n);
@@ -36,7 +37,8 @@ public class EquipoAI extends EquipoNinja {
 		super.addNinja(n);
 	}
 	
-	private synchronized void IA(){
+//	protected synchronized void IA(){
+	public synchronized void IA(){
 		if (ninjaActivo== null) ninjaActivo = ninjas.get(0);
 		ia.accionAutomatica(ninjaActivo, ninjaActivo.getCuadro().getT());
 		

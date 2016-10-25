@@ -221,5 +221,7 @@ public class EquipoNinja {
 	public boolean getActivo(){
 		return activo;
 	}
+	
+	public void IA(){};
 
 }

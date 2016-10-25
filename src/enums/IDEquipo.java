@@ -5,6 +5,6 @@ public enum IDEquipo {
 	A,
 	B,
 	CPU,
-	Test;
+	Test, Obs;
 
 }
