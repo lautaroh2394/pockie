@@ -32,6 +32,8 @@ public class Ninja {
 	private int y;
 
 	private Cuadro cuadro;
+	
+	private Ninja enemigo;
 
 	public boolean banderaMov = false;
 	public boolean banderaAtt = false;
@@ -104,39 +106,34 @@ public class Ninja {
 				(int) (cuadro.getY() + cuadro.getHeight() * 0.26));
 	}
 
-	public void IA() {	//hay que refinar, pero la base base esta
-						//TODO: arreglar la hiper velocidad con la que atacan y se mueven solos 
-//		int timer =0 ;
-//		boolean b=false;
-//		
-//		while (!b){
-//			
-//		timer++;
-//		Tablero t = getCuadro().getT();
-//		Ninja e = null;
-//		if( !elOtroEquipoEstaMuerto(this.idequipo)){
-//			e = t.buscarEnemigoCercano(this);
-//		}
-//		if (!banderaMov && timer>=500){
-// 
-//			if (e != null)
-//				{
-//				moverseParaAtacar(e, t);
-//				}
-//		 
-//		 timer = 0;
-//		 }
-//		if (!banderaAtt&&timer>=500){
-//			if (puedeAtacar(e))
-//			{
-//				atacaA(e.getCuadro());
-//				timer =0;
-//				}
-//			else rest();
-//			}
-//		if (!this.puedeHacerAlgo()){ b= true;}
-//		}
-		ia.accionAutomatica(this,this.getCuadro().getT());
+	
+	public long timer = 0;
+	public long tiempodeespera = 50;
+	public synchronized void IA() {
+		//hay que refinar, pero la base base esta
+		//si encuentra enemigo: busca una pos random desde donde atacarlo
+		//si encuentra enemigo y no puede atacarlo por mas que se mueva: se mueve a una pos random de las que puede alcanzar
+		//si no puede al enemigo, rest.
+		//si no puede atacar ni moverse (banderas en true), el metodo que lo llama se encarga de decirle que 'restee'.
+		timer++;
+		Tablero t = getCuadro().getT();
+		
+		enemigo = t.buscarEnemigoCercano(this);
+				
+		if (!banderaMov && timer >= tiempodeespera){
+			moverseParaAtacar(enemigo, t);
+			timer = 0;
+		 }
+		
+		if (!banderaAtt && timer>=tiempodeespera){
+			if (puedeAtacar(enemigo)){
+				atacaA(enemigo.getCuadro());
+				timer = 0;			
+				}
+			else rest();
+		}
+
+//		ia.accionAutomatica(this,this.getCuadro().getT());
 	}
 	
 	private boolean elOtroEquipoEstaMuerto(IDEquipo id){

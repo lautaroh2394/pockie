@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
-import ia.iaMovGrilla;
 
 public class EquipoNinja {
 	//TODO: POCKIE Hacer que un ninja se pueda mover pero dependiendo de obstaculos qeu tenga, no los puede saltar
@@ -54,10 +53,9 @@ public class EquipoNinja {
 		}
 	}
 	
-	private void borrarMuertos(LinkedList<Ninja> muertos){
+	protected void borrarMuertos(LinkedList<Ninja> muertos){
 		for (Ninja n : muertos){
 			this.murio(n);
-//			this.removeNinja(n);
 		}
 	}
 	

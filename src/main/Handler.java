@@ -1,7 +1,11 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.LinkedList;
+
+import enums.IDEquipo;
+import ninjas.EquipoNinja;
 import repositorioNinjas.GeneradorNinjas;
 import tablero.Tablero;
 
@@ -48,12 +52,18 @@ public class Handler {
 	public void agregarEquipos(){
 		GeneradorNinjas gen = new GeneradorNinjas(tab);
 		
-		tab.setEquipos(gen.pruebagenerarDosEquipos());
+		tab.setEquipos(gen.generarDosEquipos(4));
 	}
 	
-	public void agregarDosEquiposUnIA(){
+	public void agregarEquiposUnIA(int cant){
 		GeneradorNinjas gen = new GeneradorNinjas(tab);
-		tab.setEquipos(gen.pruebagenerardosequiposunninjaAI());
+		EquipoNinja e1 = gen.generarEquipoColoresNombreHyI(cant, IDEquipo.A, Color.MAGENTA, Color.CYAN);
+		EquipoNinja e2 = gen.generarEquipoColoresNombreHyIAI(cant, IDEquipo.CPU, Color.RED, Color.blue);
+		
+		LinkedList<EquipoNinja> equipos = new LinkedList<EquipoNinja>();
+		equipos.add(e1);
+		equipos.add(e2);
+		tab.setEquipos(equipos);
 	}
 	
 	private void agregarTablero(){

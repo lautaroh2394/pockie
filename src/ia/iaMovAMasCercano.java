@@ -3,7 +3,7 @@ package ia;
 import ninjas.Ninja;
 import tablero.Tablero;
 
-public class iaMovGrilla extends IA{
+public class iaMovAMasCercano extends IA{
 	
 	@Override
 	public void accionAutomatica(Ninja n, Tablero t){
@@ -14,7 +14,8 @@ public class iaMovGrilla extends IA{
 //		acercarse si se puede en x o y
 //			si no puedo evadir en x
 //				si no puedo evadir en y
- * 					si no puedo evadir en ninguno, no puedo llegar -> acercarse si se puede al siguiente oponente mas cercano
+ * 					si no puedo evadir en ninguno, no puedo llegar ->	acercarse si se puede al siguiente oponente mas cercano/
+ * 																		/acercarse al siguiente cuadro mas cercano donde puede atacar al op mas cercano
 //		(guardar siempre el camino que esta recorriendo -> lista de cuadros anteriores)
 	-->acercarse si se puede en x o y...
 		

@@ -18,8 +18,11 @@ public class GeneradorNinjas {
 	private int[] posEqA = {0,1,9,10,18,19,27,28,36,37};
 	private int[] posEqB = {7,8,16,17,25,26,34,35,33,44};
 	
+	private Nombre nombre;
+	
 	public GeneradorNinjas(Tablero t){
 		tab=t;
+		nombre = new Nombre();
 	}
 	
 	public EquipoNinja generarEquipo(int cant, IDEquipo id){
@@ -51,21 +54,11 @@ public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color no
 		return e;
 	}
 	
-	public LinkedList<EquipoNinja> pruebagenerarDosEquipos(){
+	public LinkedList<EquipoNinja> generarDosEquipos(int cant){
 		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
 		
-		EquipoNinja a = generarEquipo(4, IDEquipo.A);
-		EquipoNinja b = generarEquipoColoresNombreHyI(4, IDEquipo.B, Color.red, Color.blue);
-		
-		eq.add(a);eq.add(b);
-		return eq;
-	}
-	
-	public LinkedList<EquipoNinja> pruebagenerardosequiposunninjaAI(){
-		LinkedList<EquipoNinja> eq = new LinkedList<EquipoNinja>();
-		
-		EquipoNinja a = generarEquipoColoresNombreHyI(5, IDEquipo.A, Color.magenta, Color.cyan);
-		EquipoNinja b = generarEquipoColoresNombreHyIAI(5, IDEquipo.CPU, Color.red, Color.blue);
+		EquipoNinja a = generarEquipo(cant, IDEquipo.A);
+		EquipoNinja b = generarEquipoColoresNombreHyI(cant, IDEquipo.B, Color.red, Color.blue);
 		
 		eq.add(a);eq.add(b);
 		return eq;
@@ -90,8 +83,7 @@ public EquipoNinja generarEquipoColoresNombreHyI(int cant, IDEquipo id, Color no
 	
 	
 	public String generarNombre(){
-		Nombre n = new Nombre();
-		return n.devolverNombre();
+		return nombre.devolverNombre();
 		
 	}
 	

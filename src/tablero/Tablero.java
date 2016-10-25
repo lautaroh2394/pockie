@@ -253,7 +253,7 @@ public class Tablero extends GameObject {
 		}
 	}
 	
-	private void equiposTick(){
+	private synchronized void equiposTick(){
 		
 		for (EquipoNinja e : equipos){
 			e.controlarMuertos();
