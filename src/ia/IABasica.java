@@ -1,14 +1,12 @@
 package ia;
 
-import java.util.LinkedList;
-
 import ninjas.Ninja;
 import tablero.Tablero;
 
 public class IABasica extends IA{
 	
 	public long timer = 0;
-	public long tiempodeespera = 50;
+	public long tiempodeespera = 20;
 	
 	public IABasica() {
 		super();

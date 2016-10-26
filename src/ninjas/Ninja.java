@@ -38,6 +38,7 @@ public class Ninja {
 	private MenuNinja menu;
 
 	public IDEquipo idequipo;
+	public IA ia;
 
 	public Ninja(String nombre, float ataque, float defensa, Cuadro cuadro, int t) {
 		this.nom = nombre;
@@ -117,31 +118,10 @@ public class Ninja {
 		return distancia(c.getCuadro(),this.cuadro,this.distAtt);} else return false;
 	}
 
-	public void moverseParaAtacar(Ninja n, Tablero t) {
-		Random r = new Random();
-		LinkedList<Cuadro> cquemepuedomover = new LinkedList<Cuadro>();
-		LinkedList<Cuadro> cquepuedoAtacarsimemuevoono = new LinkedList<Cuadro>();
-		for (Cuadro c : t.getCuadros()){
-			if (puedoMovermeA(c)){
-				cquemepuedomover.add(c);
-			}
-			if (distancia(n.getCuadro(),c,this.distAtt) && puedoMovermeA(c)){
-				cquepuedoAtacarsimemuevoono.add(c);
-			}
-		}
-		
-		if (cquepuedoAtacarsimemuevoono.size() != 0){
-			movete(cquepuedoAtacarsimemuevoono.get(r.nextInt(cquepuedoAtacarsimemuevoono.size())));
-		}
-		else if (cquemepuedomover.size() != 0){
-			movete(cquemepuedomover.get(r.nextInt(cquemepuedomover.size())));
-		}
-		else this.rest();
-	}
-
 	public boolean puedoMovermeA(Cuadro cuadro) {
 		return (distancia(this.cuadro, cuadro, this.distMov) && !banderaMov && cuadro != this.cuadro
-				&& cuadro.ninjaIsNull());
+				&& cuadro.ninjaIsNull() 
+				&& ia.posicionesALasQuePuedeIr(this, getTablero()).contains(cuadro));
 	}
 
 	public boolean puedeHacerAlgo() {
@@ -159,6 +139,9 @@ public class Ninja {
 				(int) ((cuadro.getWidth() - 4) * (vida) / vidaMax), 5);
 	}
 
+	//TODO: POCKIE: Hacer que el "movete" mueva el pers a lo largo de un camino
+					//supongo que tendria que recibir la lista del A* pero con los numeros que no implemente 
+					//(a cada cuadro le corresponde n nro que dice en que iteracion del alg se agrego)
 	public boolean movete(Cuadro cuadro) {
 		if (puedoMovermeA(cuadro)) {
 			setXEnCuadro(cuadro, this.tam);
@@ -397,9 +380,14 @@ public class Ninja {
 		menu.decidiQueHacer(mx, my, this);
 	}
 
+//	public void pediQueTeColoreenLosCercanos(int nro, Color c) {
+//
+//		getTablero().colorearCercanos(getCuadro(), nro, c);
+//	}
+	
 	public void pediQueTeColoreenLosCercanos(int nro, Color c) {
 
-		getTablero().colorearCercanos(getCuadro(), nro, c);
+		getTablero().colorearCercanos(ia.posicionesALasQuePuedeIr(this, getTablero()), c);
 	}
 
 	private Tablero getTablero() {

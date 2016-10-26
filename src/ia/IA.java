@@ -1,5 +1,6 @@
 package ia;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -19,13 +20,10 @@ public class IA {
 	
 	protected void moverseParaAtacar(Ninja n, Ninja enemigo, Tablero t) {
 		Random r = new Random();
-		LinkedList<Cuadro> cquemepuedomover = new LinkedList<Cuadro>();
+		LinkedList<Cuadro> cquemepuedomover = posicionesALasQuePuedeIr(n, t);
 		LinkedList<Cuadro> cquepuedoAtacarsimemuevoono = new LinkedList<Cuadro>();
 		for (Cuadro c : t.getCuadros()){
-			if (n.puedoMovermeA(c)){
-				cquemepuedomover.add(c);
-			}
-			if (n.distancia(enemigo.getCuadro(),c,n.distAtt) && n.puedoMovermeA(c)){
+			if (n.distancia(enemigo.getCuadro(),c,n.distAtt) && cquemepuedomover.contains(c)){
 				cquepuedoAtacarsimemuevoono.add(c);
 			}
 		}
@@ -39,191 +37,93 @@ public class IA {
 		else n.rest();
 	}
 	
-	//TODO: POCKIE: metodo para encontrar los cuadros a los que efecivamente puede llegar,
-	//teniendo en cuenta obstaculos o ninjas que estorben su camino
-	public LinkedList<Cuadro> puedeMoverseA(Ninja n, Cuadro c, Tablero t){
-		int cantpasos= n.getDistMov();
-		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>();
-		pasos.add(n.getCuadro());
+	public LinkedList<Cuadro> posicionesALasQuePuedeIr(Ninja n, Tablero t){
+		int i = 0;
+		boolean fin = false;
+		HashSet<Cuadro> temp;
+		LinkedList<Cuadro> posQuePuedeIr = new LinkedList<Cuadro>();
+		posQuePuedeIr.add(n.getCuadro());
+		int pos = posQuePuedeIr.size();
 		
-		Cuadro temp = null;
-		
-		int nposx = n.getCuadro().getPosRelX();
-		int nposy = n.getCuadro().getPosRelY();
-		int cposx = c.getPosRelX();
-		int cposy = c.getPosRelY();
-		
-		while (cantpasos > 0){
-			if (!puedeMoverse(n,t,pasos)){
-				return null;
+		while ( i < n.getDistMov() && !fin){
+			temp = new HashSet<Cuadro>();
+			
+			for (int j = pos-1; j<posQuePuedeIr.size();j++){
+				temp.addAll(adyacentes(posQuePuedeIr.get(j),t));
 			}
-			else{
-				if (puedeAcercarse(n,c,t,pasos)){
-					temp = acercarse(n,c,t,pasos);
-					pasos.add(temp);
-					cantpasos--;
-				}
-				else {
-					if (puedeEvadir(n,c,t,pasos)){
-						temp = evadir(n,c,t,pasos);
-						pasos.add(temp);
-						cantpasos--;
-					}
-				}
+			
+			if (temp ==null) {}//fin = true;
+			else {
+				temp = sacarLosQueYaEstanEn(posQuePuedeIr,temp);
+				posQuePuedeIr.addAll(temp);
+				
 			}
+			i++;
 		}
-		return pasos;
+		return posQuePuedeIr;
 	}
 	
-	protected boolean puedeMoverse(Ninja n, Tablero t, LinkedList<Cuadro> pasos){
-		 LinkedList<Cuadro> adyacentes = adyacentes(n,t);
-		 
-		 boolean rta = false;
-		 
-		 for (int i = 0; i<4;i++){
-			 if (adyacentes.get(i).ninjaIsNull() && !pasos.contains(adyacentes.get(i))){
-				 rta = true;
-				 i = 4;
-			 }
-		 }
-		 return rta;
-	 }
-	 
-	 public boolean puedeAcercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 
-		 if (n.getCuadro().getPosRelX() == c.getPosRelX()) return puedeAcercarsePorY(n,c,t, pasos);
-		 else if (n.getCuadro().getPosRelY() == c.getPosRelY()) return puedeAcercarsePorX(n,c,t, pasos);  
-		 else return (puedeAcercarsePorX(n,c,t, pasos)||puedeAcercarsePorY(n,c,t, pasos));
-	 }
-	 
-	 protected boolean puedeAcercarsePorX(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 		 
-		 if (estaEnXMenor(n,c)){
-			 return adyacenteXVacio(n,t,1,pasos);
-		 }
-		 else{ return adyacenteXVacio(n,t,-1, pasos);
-		 }
-	 }
-	 
-	 protected boolean estaEnXMenor(Ninja n, Cuadro c){
-		 int  nx = n.getCuadro().getPosRelX();
-		 int cx = c.getPosRelX();
-		 return (nx<cx);
-	 }
-	 
-	 protected boolean puedeAcercarsePorY(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 
-		 if (estaEnYMenor(n,c)){
-			 return adyacenteYVacio(n,t,1, pasos);
-		 }
-		 else{ return adyacenteYVacio(n,t,-1, pasos);
-		 }
-	 }
-	 
-	 protected boolean estaEnYMenor(Ninja n, Cuadro c){
-		 int  ny = n.getCuadro().getPosRelY();
-		 int cy = c.getPosRelY();
-		 return (ny<cy);
-	 }
-	 
-	 public Cuadro acercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 int indexCuadroNinja = t.getCuadros().indexOf(n.getCuadro());
-		 Cuadro rta = null;
-		 
-		 if (puedeAcercarsePorX(n, c, t,pasos)){
-			 if(estaEnXMenor(n,c)){
-				 if (!pasos.contains(t.getCuadros().get(indexCuadroNinja+1))){
-				 rta = t.getCuadros().get(indexCuadroNinja+1);}
-				 
-			 }else {
-				 if (!pasos.contains(t.getCuadros().get(indexCuadroNinja-1))){
-				 rta = t.getCuadros().get(indexCuadroNinja-1);}}
-			 }
-		else if (puedeAcercarsePorY(n,c,t,pasos)){
-			  if(estaEnYMenor(n,c)){
-				  if(!pasos.contains(t.getCuadros().get(indexCuadroNinja+1))){
-				  rta = t.getCuadros().get(indexCuadroNinja+9);}
-				  
-			 }else {
-				 if(!pasos.contains(t.getCuadros().get(indexCuadroNinja+1))){
-				 rta = t.getCuadros().get(indexCuadroNinja-9);}}
-			 }
-		 return rta;
-		 }
-	 
-	 protected Cuadro evadir(Ninja n,Cuadro c,Tablero t, LinkedList<Cuadro> pasos){
-		 int indexCuadroNinja = t.getCuadros().indexOf(n.getCuadro());
-		 Cuadro rta = null;
-		 
-		 if (puedeEvadirPorX(n, c, t, pasos)){
-			 if(estaEnXMenor(n,c)){
-				 if(!pasos.contains(t.getCuadros().get(indexCuadroNinja-1))){
-				 rta = t.getCuadros().get(indexCuadroNinja-1);}
-				 
-			 }else {
-				 if(!pasos.contains(t.getCuadros().get(indexCuadroNinja+1))){
-				 rta = t.getCuadros().get(indexCuadroNinja+1);}}
-			 }
-		else if (puedeEvadirPorY(n,c,t,pasos)){
-			  if(estaEnYMenor(n,c)){
-				  if(!pasos.contains(t.getCuadros().get(indexCuadroNinja-9))){
-				  rta = t.getCuadros().get(indexCuadroNinja-9);}
-				  
-			 }else {
-				 if(!pasos.contains(t.getCuadros().get(indexCuadroNinja+9))){
-				 rta = t.getCuadros().get(indexCuadroNinja+9);}}
-			 }
-		 return rta;
-		 }
-	 
-	 public boolean adyacenteXVacio(Ninja n, Tablero t, int i, LinkedList<Cuadro> pasos){
-			
-		 Cuadro cuadroNin = n.getCuadro();
-		 int indexCuadro = t.getCuadros().indexOf(cuadroNin);
-		 Cuadro adyacente = t.getCuadros().get(indexCuadro+i);
-		 return adyacente.ninjaIsNull() && !pasos.contains(adyacente);
-	 }
-	 
-	 public boolean adyacenteYVacio(Ninja n, Tablero t, int i, LinkedList<Cuadro> pasos){
-			
-		 Cuadro cuadroNin = n.getCuadro();
-		 int indexCuadro = t.getCuadros().indexOf(cuadroNin);
-		 Cuadro adyacente = t.getCuadros().get(indexCuadro+(9*i));
-		 return adyacente.ninjaIsNull()&& !pasos.contains(adyacente);
-	 }
-	 
-	 public LinkedList<Cuadro> adyacentes(Ninja n, Tablero t){
-		 
-		 LinkedList<Cuadro> adyacentes = new LinkedList<Cuadro>();
-		 int indexCuadroNinja = t.getCuadros().indexOf(n.getCuadro());
-		 adyacentes.add(t.getCuadros().get(indexCuadroNinja+1));
-		 adyacentes.add(t.getCuadros().get(indexCuadroNinja-1));
-		 adyacentes.add(t.getCuadros().get(indexCuadroNinja+9));
-		 adyacentes.add(t.getCuadros().get(indexCuadroNinja-9));
-		 
-		 return adyacentes;
-	 }
-	 
-	 public boolean puedeEvadir(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 return (puedeEvadirPorX(n,c,t, pasos)||puedeEvadirPorY(n,c,t, pasos));
-	 }
-	 
-	 public boolean puedeEvadirPorY(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 return (adyacenteYVacio(n,t,-1, pasos) || adyacenteYVacio(n,t,1, pasos));
-//		 if (estaEnYMenor(n,c)){
-//			 return adyacenteYVacio(n,t,-1, pasos);
-//		 }
-//		 else{ return adyacenteYVacio(n,t,1, pasos);
-//		 }
-	 }
-	 
-	 public boolean puedeEvadirPorX(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 return ((adyacenteXVacio(n,t,1,pasos))||(adyacenteXVacio(n,t,-1, pasos)));
-//		 
-//		 if (estaEnXMenor(n,c)){
-//			 return adyacenteXVacio(n,t,-1, pasos);
-//		 }
-//		 else{ return adyacenteXVacio(n,t,1,pasos);
-//		 }
-	 }
+	public HashSet<Cuadro> adyacentes(Cuadro c, Tablero t){
+		HashSet<Cuadro> ady = new HashSet<Cuadro>();
+		int index = t.getCuadros().indexOf(c);
+//		int col = index % 9;
+//		int fila = Math.floorDiv((index -col),5);
+		
+		int col = c.getPosRelX();
+		int fila = c.getPosRelY();
+		
+		if (0==col){ ady.add(adyXsiguiente(c,t)); }
+		else if (8 == col) {ady.add(adyXanterior(c,t));}
+		else {ady.add(adyXanterior(c,t));ady.add(adyXsiguiente(c,t));}
+		
+		if (0 == fila){ ady.add(adyYsiguiente(c,t));}
+		else if (4 == fila){ady.add(adyYanterior(c,t));}
+		else {ady.add(adyYsiguiente(c,t));ady.add(adyYanterior(c,t));}
+		
+		HashSet<Cuadro> ocupados = ocupados(ady,t);
+		ady.removeAll(ocupados);
+		return ady;
+	}
+	
+	public HashSet<Cuadro> ocupados(HashSet<Cuadro> cs, Tablero t){
+		HashSet<Cuadro> ocupados = new HashSet<Cuadro>();
+		int index;
+		for (Cuadro c: cs){
+			index = t.getCuadros().indexOf(c);
+			if (!t.getCuadros().get(index).ninjaIsNull()){
+				ocupados.add(c);
+			}
+		}
+		
+		return ocupados;
+	}
+	
+	public Cuadro adyXsiguiente(Cuadro c, Tablero t){
+		int index = t.getCuadros().indexOf(c);
+		return t.getCuadros().get(index+1);
+	}
+	
+	public Cuadro adyYsiguiente(Cuadro c, Tablero t){
+		int index = t.getCuadros().indexOf(c);
+		return t.getCuadros().get(index+9);
+	}
+	
+	public Cuadro adyXanterior(Cuadro c, Tablero t){
+		int index = t.getCuadros().indexOf(c);
+		return t.getCuadros().get(index-1);
+	}
+	
+	public Cuadro adyYanterior(Cuadro c, Tablero t){
+		int index = t.getCuadros().indexOf(c);
+		return t.getCuadros().get(index-9);
+	}
+	
+	public HashSet<Cuadro> sacarLosQueYaEstanEn(LinkedList<Cuadro> pos, HashSet<Cuadro> temp){
+		HashSet<Cuadro> t = new HashSet<Cuadro>();
+		for (Cuadro c: temp){
+			if (!pos.contains(c)){t.add(c);};
+		}
+		return t;
+	}
+
 }

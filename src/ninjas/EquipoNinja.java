@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 
 import enums.IDEquipo;
+import ia.IA;
 
 public class EquipoNinja {
 	//TODO: POCKIE Hacer que un ninja se pueda mover pero dependiendo de obstaculos qeu tenga, no los puede saltar
@@ -16,7 +17,10 @@ public class EquipoNinja {
 	
 	protected float vidaMax = 0;
 	
+	public IA ia;
+	
 	public EquipoNinja(IDEquipo id, LinkedList<Ninja> n){
+		this.ia = new IA();
 		this.ninjas = n;
 		this.id= id;
 		avisarlesDeQueEquipoSon(n);
@@ -102,6 +106,7 @@ public class EquipoNinja {
 		this.ninjas.add(n);
 		n.setIdequipo(id);
 		vidaMax+= n.getVidaMax();
+		n.ia = this.ia;
 	}
 	
 	public void removeNinja(Ninja n){

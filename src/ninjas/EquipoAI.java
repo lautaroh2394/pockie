@@ -4,11 +4,13 @@ import java.util.LinkedList;
 
 import enums.IDEquipo;
 import ia.IA;
+import ia.IABasica;
+import ia.IAaestrella;
 
 public class EquipoAI extends EquipoNinja {
 	
-//	private IA ia;
 	public IA ia;
+//	public IAaestrella ia;
 
 	public EquipoAI(IDEquipo id, LinkedList<Ninja> n){
 		super(id,n);
@@ -18,7 +20,8 @@ public class EquipoAI extends EquipoNinja {
 		this(id, new LinkedList<Ninja>());
 	}
 	
-	public EquipoAI(IDEquipo id, LinkedList<Ninja> n, IA ia){
+//	public EquipoAI(IDEquipo id, LinkedList<Ninja> n, IA ia){
+	public EquipoAI(IDEquipo id, LinkedList<Ninja> n, IAaestrella ia){
 		super(id,n);
 		this.ia = ia;
 

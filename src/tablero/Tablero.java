@@ -251,9 +251,17 @@ public class Tablero extends GameObject {
 		return c;
 	}
 	
-	public void colorearCercanos(Cuadro cuadro, int nro, Color color ){
+//	public void colorearCercanos(Cuadro cuadro, int nro, Color color ){
+//		for (Cuadro c : cuadros){
+//			if (distancia(c,cuadro)<=nro){
+//				c.setColor(color);
+//			}
+//		}
+//	}
+	
+	public void colorearCercanos(LinkedList<Cuadro> cs, Color color ){
 		for (Cuadro c : cuadros){
-			if (distancia(c,cuadro)<=nro){
+			if (cs.contains(c)){
 				c.setColor(color);
 			}
 		}

@@ -6,6 +6,7 @@ import java.util.Random;
 
 import enums.IDEquipo;
 import ia.IABasica;
+import ia.IAaestrella;
 import ninjas.EquipoAI;
 import ninjas.EquipoNinja;
 import ninjas.Ninja;
@@ -68,6 +69,7 @@ public class GeneradorNinjas {
 			temp.nombreNormal = nombreH;
 			e.addNinja(temp);
 		}
+//		e.setIA(new IAaestrella());
 		e.setIA(new IABasica());
 		return e;
 	}
