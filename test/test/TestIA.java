@@ -64,34 +64,40 @@ public class TestIA {
 		assertEquals(e.ia.adyacenteXVacio(cpu,tab,1, pasos), true);
 		assertEquals(e.ia.adyacenteXVacio(cpu,tab,-1, pasos), true);
 		
+		tab.agregarObstaculo(tab.getCuadros().get(34));
+		tab.agregarObstaculo(tab.getCuadros().get(16));
+		assertEquals(e.ia.adyacenteYVacio(cpu,tab,-1, pasos), false);
+		assertEquals(e.ia.adyacenteYVacio(cpu,tab,1, pasos), false);
+		
+		tab.agregarObstaculo(tab.getCuadros().get(24));
+		tab.agregarObstaculo(tab.getCuadros().get(26));
+		assertEquals(e.ia.adyacenteXVacio(cpu,tab,-1, pasos), false);
+		assertEquals(e.ia.adyacenteXVacio(cpu,tab,1, pasos), false);
 	}
 	
 	@Test
 	public void testEvadir(){
 		tab.agregarObstaculo(tab.getCuadros().get(24));
-		Obstaculo o = (Obstaculo) tab.getCuadros().get(24).getNinja();
 		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
-		boolean b = e.ia.puedeEvadir(cpu,o.getCuadro(),tab,pasos);
+		boolean b = e.ia.puedeEvadir(cpu,tab.getCuadros().get(21),tab,pasos);
 		assertTrue(b);
 	}
 	
 	@Test
 	public void testEvadir2(){
 		tab.agregarObstaculo(tab.getCuadros().get(24));
-		tab.agregarObstaculo(tab.getCuadros().get(26));
 		Obstaculo o = (Obstaculo) tab.getCuadros().get(24).getNinja();
 		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
-		boolean b = e.ia.puedeEvadirPorX(cpu,o.getCuadro(),tab,pasos);
-		assertFalse(b);
+		boolean b = e.ia.puedeEvadirPorX(cpu,tab.getCuadros().get(21),tab,pasos);
+		assertTrue(b);
 	}
 	
 	@Test
 	public void testEvadir3(){
 		tab.agregarObstaculo(tab.getCuadros().get(34));
 		tab.agregarObstaculo(tab.getCuadros().get(16));
-		Obstaculo o = (Obstaculo) tab.getCuadros().get(16).getNinja();
 		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
-		boolean b = e.ia.puedeEvadirPorY(cpu,o.getCuadro(),tab,pasos);
+		boolean b = e.ia.puedeEvadirPorY(cpu,tab.getCuadros().get(21),tab,pasos);
 		assertFalse(b);
 	}
 	
@@ -101,22 +107,47 @@ public class TestIA {
 		tab.agregarObstaculo(tab.getCuadros().get(26));
 		tab.agregarObstaculo(tab.getCuadros().get(34));
 		tab.agregarObstaculo(tab.getCuadros().get(16));
-		Obstaculo o = (Obstaculo) tab.getCuadros().get(24).getNinja();
 		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
-		boolean b = e.ia.puedeEvadir(cpu,o.getCuadro(),tab,pasos);
+		boolean b = e.ia.puedeEvadir(cpu,tab.getCuadros().get(21),tab,pasos);
+		assertFalse(b);
+	}
+	
+	public void testEvadir5(){
+		tab.agregarObstaculo(tab.getCuadros().get(24));
+		tab.agregarObstaculo(tab.getCuadros().get(34));
+		tab.agregarObstaculo(tab.getCuadros().get(16));
+		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
+		boolean b = e.ia.puedeEvadir(cpu,tab.getCuadros().get(21),tab,pasos);
+		assertTrue(b);
+		b = e.ia.puedeEvadirPorY(cpu,tab.getCuadros().get(21),tab,pasos);
+		assertFalse(b);
+		b = e.ia.puedeEvadirPorX(cpu,tab.getCuadros().get(21),tab,pasos);
+		assertTrue(b);
+	}
+	
+	public void testEvadir6(){
+		tab.agregarObstaculo(tab.getCuadros().get(24));
+		tab.agregarObstaculo(tab.getCuadros().get(34));
+		tab.agregarObstaculo(tab.getCuadros().get(16));
+		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro()); pasos.add(tab.getCuadros().get(26));
+		boolean b = e.ia.puedeEvadir(cpu,tab.getCuadros().get(21),tab,pasos);
 		assertFalse(b);
 	}
 	
 	@Test
 	public void testAcercarse(){
-		tab.agregarObstaculo(tab.getCuadros().get(24));
-		tab.agregarObstaculo(tab.getCuadros().get(26));
-		tab.agregarObstaculo(tab.getCuadros().get(34));
-		tab.agregarObstaculo(tab.getCuadros().get(16));
-		Obstaculo o = (Obstaculo) tab.getCuadros().get(24).getNinja();
 		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
-		boolean b = e.ia.puedeEvadir(cpu,o.getCuadro(),tab,pasos);
-		assertFalse(b);
+		boolean b = e.ia.puedeAcercarse(cpu, tab.getCuadros().get(21),tab, pasos);
+		assertTrue(b);
+		
+	}
+	
+	@Test
+	public void testAcercarse2(){
+		tab.agregarObstaculo(tab.getCuadros().get(24));
+		LinkedList<Cuadro> pasos = new LinkedList<Cuadro>(); pasos.add(cpu.getCuadro());
+		boolean b = e.ia.puedeAcercarse(cpu, tab.getCuadros().get(21),tab, pasos);
+		assertFalse(b);		
 	}
 	
 

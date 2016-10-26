@@ -89,12 +89,15 @@ public class IA {
 		 return rta;
 	 }
 	 
-	 protected boolean puedeAcercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 return (puedeAcercarsePorX(n,c,t, pasos)||puedeAcercarsePorY(n,c,t, pasos));
+	 public boolean puedeAcercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
+		 
+		 if (n.getCuadro().getPosRelX() == c.getPosRelX()) return puedeAcercarsePorY(n,c,t, pasos);
+		 else if (n.getCuadro().getPosRelY() == c.getPosRelY()) return puedeAcercarsePorX(n,c,t, pasos);  
+		 else return (puedeAcercarsePorX(n,c,t, pasos)||puedeAcercarsePorY(n,c,t, pasos));
 	 }
 	 
 	 protected boolean puedeAcercarsePorX(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 
+		 		 
 		 if (estaEnXMenor(n,c)){
 			 return adyacenteXVacio(n,t,1,pasos);
 		 }
@@ -123,7 +126,7 @@ public class IA {
 		 return (ny<cy);
 	 }
 	 
-	 protected Cuadro acercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
+	 public Cuadro acercarse(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
 		 int indexCuadroNinja = t.getCuadros().indexOf(n.getCuadro());
 		 Cuadro rta = null;
 		 
@@ -206,18 +209,21 @@ public class IA {
 	 }
 	 
 	 public boolean puedeEvadirPorY(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 if (estaEnYMenor(n,c)){
-			 return adyacenteYVacio(n,t,-1, pasos);
-		 }
-		 else{ return adyacenteYVacio(n,t,1, pasos);
-		 }
+		 return (adyacenteYVacio(n,t,-1, pasos) || adyacenteYVacio(n,t,1, pasos));
+//		 if (estaEnYMenor(n,c)){
+//			 return adyacenteYVacio(n,t,-1, pasos);
+//		 }
+//		 else{ return adyacenteYVacio(n,t,1, pasos);
+//		 }
 	 }
 	 
 	 public boolean puedeEvadirPorX(Ninja n, Cuadro c, Tablero t, LinkedList<Cuadro> pasos){
-		 if (estaEnXMenor(n,c)){
-			 return adyacenteXVacio(n,t,-1, pasos);
-		 }
-		 else{ return adyacenteXVacio(n,t,1,pasos);
-		 }
+		 return ((adyacenteXVacio(n,t,1,pasos))||(adyacenteXVacio(n,t,-1, pasos)));
+//		 
+//		 if (estaEnXMenor(n,c)){
+//			 return adyacenteXVacio(n,t,-1, pasos);
+//		 }
+//		 else{ return adyacenteXVacio(n,t,1,pasos);
+//		 }
 	 }
 }

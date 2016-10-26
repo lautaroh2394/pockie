@@ -22,7 +22,7 @@ public class Tablero extends GameObject {
 	private LinkedList<Cuadro> cuadros;
 	private Cuadro cuadroActivo;
 	
-	private LinkedList<Obstaculo> obstaculos;
+	public LinkedList<Obstaculo> obstaculos;
 	
 	private int cantCuadrosEnY;
 	private int cantCuadrosEnX;	
